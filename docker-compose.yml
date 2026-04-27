@@ -5,8 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: client-portal-api
     restart: unless-stopped
-    ports:
-      - "3001:3001"
+    expose:
+      - "3001"
     environment:
       - PORT=3001
       - NODE_ENV=production
@@ -18,14 +18,24 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - RESEND_API_KEY=${RESEND_API_KEY}
+      - ADMIN_NAME=${ADMIN_NAME:-Admin}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 15s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+      - "traefik.http.routers.portal-api.rule=Host(`portal-api.advancedmarketing.co`)"
+      - "traefik.http.routers.portal-api.tls=true"
+      - "traefik.http.routers.portal-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.portal-api.loadbalancer.server.port=3001"
     networks:
-      - portal-network
+      - coolify
 
   portal:
     build:
@@ -33,14 +43,21 @@ services:
       dockerfile: Dockerfile
     container_name: client-portal
     restart: unless-stopped
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     depends_on:
       portal-api:
         condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+      - "traefik.http.routers.portal.rule=Host(`client.advancedmarketing.co`)"
+      - "traefik.http.routers.portal.tls=true"
+      - "traefik.http.routers.portal.tls.certresolver=letsencrypt"
+      - "traefik.http.services.portal.loadbalancer.server.port=80"
     networks:
-      - portal-network
+      - coolify
 
 networks:
-  portal-network:
-    driver: bridge
+  coolify:
+    external: true
