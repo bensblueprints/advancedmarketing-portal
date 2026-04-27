@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  portal-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: client-portal-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DB_HOST=${DB_HOST:-localhost}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USER=${DB_USER:-cloudcomputer}
+      - DB_PASSWORD=${DB_PASSWORD:-}
+      - DB_NAME=${DB_NAME:-client_portal}
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-}
+      - RESEND_API_KEY=${RESEND_API_KEY:-}

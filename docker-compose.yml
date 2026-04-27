@@ -1,0 +1,46 @@
+services:
+  portal-api:
+    build:
+      context: ./am-client-portal-api
+      dockerfile: Dockerfile
+    container_name: client-portal-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME:-client_portal}
+      - JWT_SECRET=${JWT_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - portal-network
+
+  portal:
+    build:
+      context: ./am-client-portal
+      dockerfile: Dockerfile
+    container_name: client-portal
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      portal-api:
+        condition: service_healthy
+    networks:
+      - portal-network
+
+networks:
+  portal-network:
+    driver: bridge

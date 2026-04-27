@@ -1,0 +1,9 @@
+node_modules/
+.netlify/
+.env
+.env.local
+package.json
+package-lock.json
+Dockerfile
+.dockerignore
+netlify/

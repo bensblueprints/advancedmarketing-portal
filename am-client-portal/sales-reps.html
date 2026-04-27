@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sales Reps | Client Portal | Advanced Marketing</title>
+    <link rel="icon" type="image/x-icon" href="https://advancedmarketing.co/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#0a0a0a;--bg-card:#111111;--gold:#c9a962;--gold-light:#d4b978;--text:#f5f3ef;--text-muted:#8a8880;--border:rgba(255,255,255,0.08);--font-display:'Cormorant Garamond',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--radius-sm:6px;--radius-lg:12px;--green:#34d399;--yellow:#fbbf24;--red:#ef4444; }
+        * { margin:0;padding:0;box-sizing:border-box; }
+        body { font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.7;min-height:100vh; }
+        h1,h2,h3 { font-family:var(--font-display);font-weight:600;line-height:1.1; }
+        .text-gradient { background:linear-gradient(135deg,var(--gold),var(--gold-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent; }
+        a { color:var(--gold);text-decoration:none; }
+        .header { padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,10,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(20px); }
+        .header-left { display:flex;align-items:center;gap:1.5rem; }
+        .header img { height:32px; }
+        .header-badge { font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);background:rgba(201,169,98,0.1);padding:0.25rem 0.6rem;border-radius:4px; }
+        .header-nav { display:flex;align-items:center;gap:1rem;flex-wrap:wrap; }
+        .header-nav a { font-size:0.8rem;font-weight:600;color:var(--text-muted);padding:0.4rem 0.8rem;border-radius:var(--radius-sm); }
+        .header-nav a:hover { color:var(--gold); }
+        .header-nav a.active { color:var(--gold);background:rgba(201,169,98,0.1); }
+        .btn-logout { background:none;border:1px solid var(--border);color:var(--text-muted);padding:0.4rem 1rem;border-radius:var(--radius-sm);font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body); }
+        .container { max-width:1000px;margin:0 auto;padding:2rem; }
+        .loading { text-align:center;padding:4rem; }
+        .loading-spinner { width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .btn { padding:0.6rem 1.2rem;background:var(--gold);color:#0a0a0a;border:none;border-radius:var(--radius-sm);font-family:var(--font-body);font-weight:700;font-size:0.8rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.04em; }
+        .btn:hover { background:var(--gold-light); }
+        .btn:disabled { opacity:0.5; }
+        .btn-outline { background:none;border:1px solid var(--border);color:var(--text-muted); }
+        .btn-outline:hover { border-color:var(--gold);color:var(--gold); }
+        .btn-sm { padding:0.4rem 0.8rem;font-size:0.7rem; }
+
+        .stats-row { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem; }
+        .stat-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem; }
+        .stat-label { font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.4rem; }
+        .stat-value { font-family:var(--font-display);font-size:1.6rem;font-weight:600; }
+
+        .add-form { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem;display:none; }
+        .add-form.open { display:block; }
+        .form-row { display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem; }
+        .form-row .field { flex:1;min-width:150px; }
+        .form-row label { display:block;font-size:0.65rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem; }
+        .form-input { width:100%;padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;font-family:var(--font-body);outline:none; }
+        .form-input:focus { border-color:var(--gold); }
+        .form-error { color:var(--red);font-size:0.8rem;margin-bottom:0.5rem;display:none; }
+
+        .rep-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem;transition:border-color 0.2s; }
+        .rep-card:hover { border-color:rgba(201,169,98,0.2); }
+        .rep-header { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;gap:1rem; }
+        .rep-name { font-family:var(--font-display);font-size:1.3rem;font-weight:600; }
+        .rep-email { font-size:0.8rem;color:var(--text-muted); }
+        .rep-stats { display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.75rem; }
+        .rep-stat { background:rgba(255,255,255,0.02);border-radius:6px;padding:0.75rem; }
+        .rep-stat .label { font-size:0.6rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.25rem; }
+        .rep-stat .val { font-family:var(--font-display);font-size:1.2rem;font-weight:600; }
+        .empty { text-align:center;padding:3rem;color:var(--text-muted);font-size:0.9rem; }
+        .footer { padding:2rem;border-top:1px solid var(--border);text-align:center; }
+        .footer p { font-size:0.7rem;color:var(--text-muted); }
+        @media(max-width:768px) { .container { padding:1.25rem 1rem; } .rep-stats { grid-template-columns:1fr 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <a href="https://advancedmarketing.co"><img src="https://advancedmarketing.co/logo.png" alt="Advanced Marketing"></a>
+            <span class="header-badge">Sales Reps</span>
+        </div>
+        <div class="header-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/admin.html">All Clients</a>
+            <a href="/tickets.html">Tickets</a>
+            <a href="/sales-reps.html" class="active">Sales Reps</a>
+            <a href="/goals.html">Goals</a>
+            <a href="/rep-welcome.html">Scripts / Onboarding</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/settings.html">Settings</a>
+            <button class="btn-logout" onclick="logout()">Log Out</button>
+        </div>
+    </div>
+
+    <div class="loading" id="loadingState"><div class="loading-spinner"></div></div>
+
+    <div class="container" id="mainContent" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+            <div>
+                <h1 style="font-size:clamp(1.6rem,4vw,2.2rem);">Sales <span class="text-gradient">Reps</span></h1>
+                <p style="color:var(--text-muted);font-size:0.9rem;" id="repCount"></p>
+            </div>
+            <button class="btn" onclick="toggleAddForm()">+ Add Sales Rep</button>
+        </div>
+
+        <!-- Totals -->
+        <div class="stats-row" id="totalsRow"></div>
+
+        <!-- Add form -->
+        <div class="add-form" id="addForm">
+            <div class="form-error" id="addError"></div>
+            <div class="form-row">
+                <div class="field"><label>Name *</label><input type="text" class="form-input" id="addName" placeholder="Sarah Johnson"></div>
+                <div class="field"><label>Email *</label><input type="email" class="form-input" id="addEmail" placeholder="sarah@advancedmarketing.co"></div>
+            </div>
+            <div class="form-row">
+                <div class="field"><label>Password *</label><input type="password" class="form-input" id="addPassword" placeholder="Min 6 characters" minlength="6"></div>
+                <div class="field"><label>Commission Rate (%)</label><input type="number" class="form-input" id="addCommission" value="20" min="0" max="100" step="0.5"></div>
+            </div>
+            <div style="display:flex;gap:0.5rem;">
+                <button class="btn" onclick="addRep()" id="addBtn">Create Sales Rep</button>
+                <button class="btn btn-outline" onclick="toggleAddForm()">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Rep list -->
+        <div id="repList"></div>
+    </div>
+
+    <div class="footer"><p>&copy; 2026 Advanced Marketing Limited. All rights reserved.</p></div>
+
+    <script>
+    var API = 'https://portal-api.advancedmarketing.co';
+    var token = localStorage.getItem('cp_token');
+    if (!token) window.location.href = '/';
+    function logout() { localStorage.removeItem('cp_token'); localStorage.removeItem('cp_client'); window.location.href = '/'; }
+    function h(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function fmtMoney(a) { return '$' + Number(a||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+    function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; }
+
+    function apiFetch(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({ Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, opts.headers || {});
+        return fetch(API + path, opts).then(function(r) { if (r.status === 401) logout(); if (r.status === 403) { window.location.href = '/dashboard.html'; } return r.json(); });
+    }
+
+    function toggleAddForm() { document.getElementById('addForm').classList.toggle('open'); }
+
+    async function loadReps() {
+        var reps = await apiFetch('/api/admin/sales-reps');
+        if (!reps) return;
+
+        document.getElementById('repCount').textContent = reps.length + ' sales rep' + (reps.length !== 1 ? 's' : '');
+
+        // Totals
+        var totalClients = 0, totalMrr = 0, totalComm = 0;
+        reps.forEach(function(r) { totalClients += r.client_count || 0; totalMrr += r.mrr || 0; totalComm += r.commission || 0; });
+        document.getElementById('totalsRow').innerHTML =
+            '<div class="stat-card"><div class="stat-label">Total Rep Clients</div><div class="stat-value">' + totalClients + '</div></div>' +
+            '<div class="stat-card"><div class="stat-label">Total Rep MRR</div><div class="stat-value" style="color:var(--gold);">' + fmtMoney(totalMrr) + '</div></div>' +
+            '<div class="stat-card"><div class="stat-label">Total Monthly Commissions</div><div class="stat-value" style="color:var(--green);">' + fmtMoney(totalComm) + '</div></div>';
+
+        // Rep cards
+        var el = document.getElementById('repList');
+        if (!reps.length) { el.innerHTML = '<div class="empty">No sales reps yet. Add your first one above.</div>'; }
+        else {
+            el.innerHTML = reps.map(function(r) {
+                return '<div class="rep-card">' +
+                    '<div class="rep-header">' +
+                        '<div><div class="rep-name">' + h(r.name) + '</div><div class="rep-email">' + h(r.email) + ' &middot; Joined ' + fmtDate(r.created_at) + '</div></div>' +
+                        '<span style="font-size:0.65rem;font-weight:700;color:var(--gold);background:rgba(201,169,98,0.1);padding:0.2rem 0.6rem;border-radius:3px;">' + r.commission_rate + '% Commission</span>' +
+                    '</div>' +
+                    '<div class="rep-stats">' +
+                        '<div class="rep-stat"><div class="label">Clients</div><div class="val">' + (r.client_count || 0) + '</div></div>' +
+                        '<div class="rep-stat"><div class="label">Client MRR</div><div class="val" style="color:var(--gold);">' + fmtMoney(r.mrr) + '</div></div>' +
+                        '<div class="rep-stat"><div class="label">Monthly Commission</div><div class="val" style="color:var(--green);">' + fmtMoney(r.commission) + '</div></div>' +
+                        '<div class="rep-stat"><div class="label">Annual Commission</div><div class="val">' + fmtMoney((r.commission || 0) * 12) + '</div></div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('mainContent').style.display = '';
+    }
+
+    async function addRep() {
+        var errEl = document.getElementById('addError');
+        var btn = document.getElementById('addBtn');
+        errEl.style.display = 'none';
+
+        var name = document.getElementById('addName').value.trim();
+        var email = document.getElementById('addEmail').value.trim();
+        var password = document.getElementById('addPassword').value;
+        var commission = document.getElementById('addCommission').value;
+
+        if (!name || !email || !password) { errEl.textContent = 'Name, email, and password are required.'; errEl.style.display = 'block'; return; }
+        if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+
+        btn.disabled = true; btn.textContent = 'Creating...';
+
+        var result = await apiFetch('/api/admin/sales-reps', {
+            method: 'POST',
+            body: JSON.stringify({ name: name, email: email, password: password, commission_rate: parseFloat(commission) || 20 })
+        });
+
+        btn.disabled = false; btn.textContent = 'Create Sales Rep';
+
+        if (result && result.error) {
+            errEl.textContent = result.error;
+            errEl.style.display = 'block';
+            return;
+        }
+
+        document.getElementById('addName').value = '';
+        document.getElementById('addEmail').value = '';
+        document.getElementById('addPassword').value = '';
+        document.getElementById('addCommission').value = '20';
+        toggleAddForm();
+        loadReps();
+    }
+
+    loadReps();
+    </script>
+</body>
+</html>

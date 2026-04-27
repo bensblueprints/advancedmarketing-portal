@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Welcome | Sales Rep Portal | Advanced Marketing</title>
+    <link rel="icon" type="image/x-icon" href="https://advancedmarketing.co/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#0a0a0a;--bg-card:#111111;--gold:#c9a962;--gold-light:#d4b978;--text:#f5f3ef;--text-muted:#8a8880;--border:rgba(255,255,255,0.08);--font-display:'Cormorant Garamond',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--radius-sm:6px;--radius-lg:12px;--green:#34d399;--yellow:#fbbf24;--red:#ef4444;--blue:#60a5fa; }
+        * { margin:0;padding:0;box-sizing:border-box; }
+        body { font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.7;min-height:100vh; }
+        h1,h2,h3 { font-family:var(--font-display);font-weight:600;line-height:1.2; }
+        .text-gradient { background:linear-gradient(135deg,var(--gold),var(--gold-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent; }
+        a { color:var(--gold);text-decoration:none; }
+        .header { padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,10,0.95); }
+        .header img { height:32px; }
+        .header-badge { font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold); }
+        .header-nav { display:flex;align-items:center;gap:1rem; }
+        .header-nav a { font-size:0.8rem;font-weight:600;color:var(--text-muted);padding:0.4rem 0.8rem;border-radius:var(--radius-sm); }
+        .header-nav a:hover { color:var(--gold); }
+        .btn-logout { background:none;border:1px solid var(--border);color:var(--text-muted);padding:0.4rem 1rem;border-radius:var(--radius-sm);font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body); }
+        .container { max-width:800px;margin:0 auto;padding:2rem; }
+
+        .hero { text-align:center;padding:3rem 0 2rem; }
+        .hero h1 { font-size:clamp(2rem,5vw,3rem);margin-bottom:0.5rem; }
+        .hero p { font-size:1rem;color:var(--text-muted);max-width:500px;margin:0 auto; }
+
+        .expect-card { background:linear-gradient(135deg,rgba(201,169,98,0.1),rgba(201,169,98,0.03));border:1px solid rgba(201,169,98,0.2);border-radius:var(--radius-lg);padding:2rem;margin-bottom:2rem;text-align:center; }
+        .expect-card h2 { font-size:1.5rem;margin-bottom:1rem;color:var(--gold); }
+        .expect-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-top:1.5rem; }
+        .expect-item { background:rgba(255,255,255,0.03);border-radius:8px;padding:1rem; }
+        .expect-item .num { font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--gold); }
+        .expect-item .label { font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600; }
+
+        .scripts-section { margin-bottom:2rem; }
+        .scripts-section h2 { font-size:1.5rem;margin-bottom:0.5rem; }
+        .scripts-section > p { font-size:0.85rem;color:var(--text-muted);margin-bottom:1.5rem; }
+
+        .script-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:1rem;overflow:hidden; }
+        .script-header { padding:1rem 1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background 0.2s; }
+        .script-header:hover { background:rgba(255,255,255,0.02); }
+        .script-header h3 { font-size:1rem;margin:0; }
+        .script-badge { font-size:0.6rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:3px;text-transform:uppercase;letter-spacing:0.08em; }
+        .badge-website { background:rgba(96,165,250,0.15);color:var(--blue); }
+        .badge-ads { background:rgba(52,211,153,0.15);color:var(--green); }
+        .badge-seo { background:rgba(251,191,36,0.15);color:var(--yellow); }
+        .badge-ai { background:rgba(168,85,247,0.15);color:#a855f7; }
+        .script-toggle { color:var(--text-muted);font-size:1.2rem;transition:transform 0.2s; }
+        .script-body { display:none;padding:0 1.5rem 1.5rem;border-top:1px solid var(--border); }
+        .script-body.open { display:block; }
+        .script-body p { font-size:0.9rem;color:var(--text-muted);margin:0.75rem 0;line-height:1.7; }
+        .script-body .line { color:var(--text);font-style:italic; }
+        .script-body .direction { color:var(--text-muted);font-size:0.8rem;font-style:normal; }
+        .script-body .closer { color:var(--gold);font-weight:600; }
+
+        .print-btn { display:inline-flex;align-items:center;gap:0.5rem;background:var(--gold);color:#0a0a0a;padding:0.7rem 1.5rem;border:none;border-radius:var(--radius-sm);font-family:var(--font-body);font-weight:700;font-size:0.85rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2rem; }
+        .print-btn:hover { background:var(--gold-light); }
+
+        .start-btn { display:block;width:100%;text-align:center;background:var(--gold);color:#0a0a0a;padding:1rem;border:none;border-radius:var(--radius-sm);font-family:var(--font-body);font-weight:700;font-size:1rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;margin-top:2rem;text-decoration:none; }
+        .start-btn:hover { background:var(--gold-light);color:#0a0a0a; }
+
+        .checklist { list-style:none;margin:1.5rem 0; }
+        .checklist li { display:flex;align-items:flex-start;gap:0.75rem;padding:0.5rem 0;font-size:0.9rem; }
+        .checklist li::before { content:'✓';color:var(--green);font-weight:700;flex-shrink:0;margin-top:2px; }
+
+        .footer { padding:2rem;border-top:1px solid var(--border);text-align:center; }
+        .footer p { font-size:0.7rem;color:var(--text-muted); }
+
+        @media print {
+            .header,.footer,.print-btn,.start-btn,.script-toggle { display:none !important; }
+            body { background:#fff;color:#000; }
+            .script-body { display:block !important;border:none; }
+            .script-card { border:1px solid #ddd;page-break-inside:avoid; }
+            .expect-card { border:1px solid #ddd; }
+        }
+        @media(max-width:768px) { .container { padding:1.25rem 1rem; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display:flex;align-items:center;gap:1.5rem;">
+            <img src="https://advancedmarketing.co/logo.png" alt="Advanced Marketing">
+            <span class="header-badge">Sales Rep Portal</span>
+        </div>
+        <div class="header-nav" id="headerNav">
+            <a href="/admin.html">My Clients</a>
+            <a href="/goals.html">Goals</a>
+            <a href="/rep-welcome.html" class="active" style="color:var(--gold);background:rgba(201,169,98,0.1);">Scripts</a>
+            <button class="btn-logout" onclick="localStorage.removeItem('cp_token');window.location.href='/'">Log Out</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Welcome to <span class="text-gradient">Advanced Marketing</span></h1>
+            <h2 id="repGreeting" style="font-size:1.3rem;color:var(--gold);margin-top:0.5rem;display:none;"></h2>
+            <p>You're about to start closing deals. Here's everything you need to hit the ground running.</p>
+        </div>
+
+        <!-- Daily Expectations -->
+        <div class="expect-card">
+            <h2>Your Daily Expectations</h2>
+            <p style="font-size:0.9rem;color:var(--text-muted);">Consistency is the game. Hit these numbers every day and the money follows.</p>
+            <div class="expect-grid">
+                <div class="expect-item"><div class="num">100</div><div class="label">Calls / Day</div></div>
+                <div class="expect-item"><div class="num">1</div><div class="label">Sale / Day</div></div>
+                <div class="expect-item"><div class="num">$500</div><div class="label">Avg Deal</div></div>
+                <div class="expect-item"><div class="num">$15K</div><div class="label">30-Day Target</div></div>
+            </div>
+            <ul class="checklist">
+                <li>Make 100 cold calls every single day — no exceptions</li>
+                <li>Close 1 deal per day minimum — that's your baseline</li>
+                <li>Log your calls, pitches, and closes in Goals every day</li>
+                <li>Learn the scripts below — memorize them, don't read them</li>
+                <li>Every client you close gets $20/mo hosting = recurring commission for you</li>
+            </ul>
+        </div>
+
+        <!-- Sales Flow -->
+        <div class="expect-card" style="text-align:left;">
+            <h2 style="text-align:center;">The Sales Flow</h2>
+            <p style="font-size:0.85rem;color:var(--text-muted);text-align:center;margin-bottom:1.5rem;">Follow this order. Don't skip steps.</p>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+                <div style="display:flex;gap:1rem;align-items:flex-start;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:var(--blue);color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">1</div>
+                    <div><div style="font-weight:600;font-size:0.95rem;">Sell the Website ($500)</div><div style="font-size:0.8rem;color:var(--text-muted);">This is your primary product. Every call should pitch the website first. Pay only if they like it — zero risk for them.</div></div>
+                </div>
+                <div style="display:flex;gap:1rem;align-items:flex-start;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:var(--gold);color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">2</div>
+                    <div><div style="font-weight:600;font-size:0.95rem;">Add Hosting ($20/mo)</div><div style="font-size:0.8rem;color:var(--text-muted);">Every website client gets hosting. This is your MRR builder. $20/mo per client = recurring commission for you every month.</div></div>
+                </div>
+                <div style="display:flex;gap:1rem;align-items:flex-start;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);color:var(--text);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;border:1px solid var(--border);">↓</div>
+                    <div><div style="font-weight:600;font-size:0.95rem;color:var(--yellow);">UPSELLS — Only After Website is Complete</div><div style="font-size:0.8rem;color:var(--text-muted);">Do NOT pitch these on the first call. These come after the website is delivered and the client is happy.</div></div>
+                </div>
+                <div style="display:flex;gap:1rem;align-items:flex-start;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:var(--green);color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">3</div>
+                    <div><div style="font-weight:600;font-size:0.95rem;">Google Ads ($500/mo + ad spend)</div><div style="font-size:0.8rem;color:var(--text-muted);">Client has a great website but no traffic? Sell them ads. If they already run ads, skip to step 4.</div></div>
+                </div>
+                <div style="display:flex;gap:1rem;align-items:flex-start;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:var(--green);color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">4</div>
+                    <div><div style="font-weight:600;font-size:0.95rem;">SEO (Monthly retainer)</div><div style="font-size:0.8rem;color:var(--text-muted);">Long-term play. Sell alongside or after ads. Great for clients who want organic traffic without ongoing ad spend.</div></div>
+                </div>
+                <div style="display:flex;gap:1rem;align-items:flex-start;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:#a855f7;color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">5</div>
+                    <div><div style="font-weight:600;font-size:0.95rem;">AI Call Booking ($300/mo + usage | $100/mo for fishing guides)</div><div style="font-size:0.8rem;color:var(--text-muted);">Client has a site AND is running ads? They're getting calls. Sell them the AI answering service so they never miss a booking. Book a demo with Ben.</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <div class="scripts-section">
+            <h2>Sales Scripts</h2>
+            <p>Download, print, and learn these. Don't read from the paper — know them cold. Click each to expand.</p>
+
+            <button class="print-btn" onclick="window.print()">🖨️ Print All Scripts</button>
+
+            <!-- Pitch 1: Website -->
+            <div class="script-card">
+                <div class="script-header" onclick="toggleScript(this)">
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <span class="script-badge badge-website">Website</span>
+                        <h3>Pitch 1: Website ($500, pay only if you like it)</h3>
+                    </div>
+                    <span class="script-toggle">+</span>
+                </div>
+                <div class="script-body">
+                    <p class="line">"Hey, quick question. You want the good news or the bad news?"</p>
+                    <p class="direction">[They respond.]</p>
+                    <p class="line">"Bad news first. You got no website, or the one you have looks like it was built when fish still had dial-up. Right now somebody's googling 'fishing guide near me' and booking with the guy who showed up. That's not you.</p>
+                    <p class="line">Good news, I'll build you a full website, clean, professional, your photos, your rates, your trips, booking form, the whole thing. And you don't pay a dime until you see it and you like it. If you don't like it, I walk away. Zero dollars out of your pocket.</p>
+                    <p class="closer">You've got nothing to lose and a full website to gain. You got 10 minutes this week to talk?"</p>
+                </div>
+            </div>
+
+            <!-- Pitch 2: Google Ads -->
+            <div class="script-card">
+                <div class="script-header" onclick="toggleScript(this)">
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <span class="script-badge badge-ads">Google Ads</span>
+                        <h3>Pitch 2: Google Ads ($500/mo + ad spend)</h3>
+                    </div>
+                    <span class="script-toggle">+</span>
+                </div>
+                <div class="script-body">
+                    <p class="line">"Quick one for ya. Good news or bad news first?"</p>
+                    <p class="direction">[They respond.]</p>
+                    <p class="line">"Bad news. Right now when someone types 'fishing guide [their area]' into Google, your competitors are showing up at the top and they're getting those bookings. You're invisible.</p>
+                    <p class="line">Good news, I run Google Ads for fishing guides. Here's how it works: you only pay Google when someone actually clicks on your ad. Not when they see it, not when they scroll past it. Only when they click. So you're not burning money on people who don't care, you're paying for people who are already looking to book a trip.</p>
+                    <p class="line">I manage the whole thing for five hundred a month, and I'm watching your conversions the whole time. If people are clicking but not booking, I find out why and I fix it. You're not just getting clicks, you're getting bookings.</p>
+                    <p class="closer">What does a full charter run you? Because this pays for itself fast. You want to talk numbers for your area?"</p>
+                </div>
+            </div>
+
+            <!-- Pitch 3: SEO -->
+            <div class="script-card">
+                <div class="script-header" onclick="toggleScript(this)">
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <span class="script-badge badge-seo">SEO</span>
+                        <h3>Pitch 3: SEO (Long-term rankings)</h3>
+                    </div>
+                    <span class="script-toggle">+</span>
+                </div>
+                <div class="script-body">
+                    <p class="line">"Hey, good news or bad news?"</p>
+                    <p class="direction">[They respond.]</p>
+                    <p class="line">"Bad news. Google's got no idea you exist. You're on page three or four, which means you might as well not be there. Other guides who've been around online longer are getting found every single day for free while you're not.</p>
+                    <p class="line">Good news, that's fixable. SEO takes 3 to 6 months but once it kicks in you are getting found on Google without paying for ads, every day, permanently. I handle the whole thing.</p>
+                    <p class="closer">It's not overnight but it's the best long-term move you can make. You want to know what it would take in your market?"</p>
+                </div>
+            </div>
+
+            <!-- Pitch 4: AI Call Booking -->
+            <div class="script-card">
+                <div class="script-header" onclick="toggleScript(this)">
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <span class="script-badge badge-ai">AI Voice</span>
+                        <h3>Pitch 4: AI Call Booking ($300/mo | $100/mo fishing guides)</h3>
+                    </div>
+                    <span class="script-toggle">+</span>
+                </div>
+                <div class="script-body">
+                    <p class="line">"Real quick. Good news or bad news?"</p>
+                    <p class="direction">[They respond.]</p>
+                    <p class="line">"Bad news. You're missing bookings right now. Someone called while you were on the water, got your voicemail, and booked the next guy. Happens every week whether you know it or not.</p>
+                    <p class="line">Good news, I put an AI on your phone line that answers 24/7, talks to callers like a real person, answers their questions, and books them straight into your calendar while you're still fighting a fish. You never miss another call.</p>
+                    <p class="line">Three hundred a month plus a small usage fee based on call volume. For fishing guides it's a hundred a month. And same deal as my websites, I'll set it up and you only pay if you like how it works. One missed booking probably costs you more than a month of this service.</p>
+                    <p class="closer">Worth a conversation?"</p>
+                </div>
+            </div>
+        </div>
+
+        <a href="/admin.html" class="start-btn">Let's Go — Start Selling →</a>
+    </div>
+
+    <div class="footer"><p>&copy; 2026 Advanced Marketing Limited. All rights reserved.</p></div>
+
+    <script>
+    var API = 'https://portal-api.advancedmarketing.co';
+
+    function toggleScript(header) {
+        var body = header.nextElementSibling;
+        var toggle = header.querySelector('.script-toggle');
+        var isOpen = body.classList.toggle('open');
+        toggle.textContent = isOpen ? '−' : '+';
+    }
+
+    // Personalize greeting and show full admin nav if admin
+    var token = localStorage.getItem('cp_token');
+    if (token) {
+        fetch(API + '/api/me', { headers: { Authorization: 'Bearer ' + token } })
+        .then(function(r) { return r.json(); })
+        .then(function(me) {
+            if (me && me.name) {
+                var greeting = document.getElementById('repGreeting');
+                greeting.textContent = 'Let\'s get it, ' + me.name.split(' ')[0] + '.';
+                greeting.style.display = '';
+            }
+            if (me && (me.is_admin || me.role === 'admin')) {
+                document.getElementById('headerNav').innerHTML =
+                    '<a href="/dashboard.html">Dashboard</a>' +
+                    '<a href="/admin.html">All Clients</a>' +
+                    '<a href="/tickets.html">Tickets</a>' +
+                    '<a href="/sales-reps.html">Sales Reps</a>' +
+                    '<a href="/goals.html">Goals</a>' +
+                    '<a href="/rep-welcome.html" class="active" style="color:var(--gold);background:rgba(201,169,98,0.1);">Scripts / Onboarding</a>' +
+                    '<a href="/reports.html">Reports</a>' +
+                    '<a href="/settings.html">Settings</a>' +
+                    '<button class="btn-logout" onclick="localStorage.removeItem(\'cp_token\');window.location.href=\'/\'">Log Out</button>';
+            }
+        }).catch(function() {});
+    }
+    </script>
+</body>
+</html>

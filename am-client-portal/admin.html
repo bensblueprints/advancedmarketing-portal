@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin | Client Portal | Advanced Marketing</title>
+    <link rel="icon" type="image/x-icon" href="https://advancedmarketing.co/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a; --bg-card: #111111; --bg-card-hover: #161616;
+            --gold: #c9a962; --gold-light: #d4b978; --gold-dark: #a88c4a;
+            --text: #f5f3ef; --text-muted: #8a8880; --border: rgba(255,255,255,0.08);
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+            --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px;
+            --transition-fast: 0.3s ease;
+            --green: #34d399; --blue: #60a5fa; --yellow: #fbbf24; --red: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+        h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; }
+        .text-gradient { background: linear-gradient(135deg, var(--gold), var(--gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        a { color: var(--gold); text-decoration: none; }
+
+        .header { padding: 1rem 2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,10,0.95); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px); }
+        .header-left { display: flex; align-items: center; gap: 1.5rem; }
+        .header img { height: 32px; }
+        .header-badge { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); background: rgba(201,169,98,0.1); padding: 0.25rem 0.6rem; border-radius: 4px; }
+        .header-nav { display: flex; align-items: center; gap: 1rem; }
+        .header-nav a { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); }
+        .header-nav a:hover { color: var(--gold); }
+        .header-nav a.active { color: var(--gold); background: rgba(201,169,98,0.1); }
+        .btn-logout { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 0.4rem 1rem; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); }
+        .btn-logout:hover { border-color: var(--gold); color: var(--gold); }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+        .loading { text-align: center; padding: 4rem; }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Page header */
+        .page-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .page-hdr h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); }
+        .page-hdr p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* Buttons */
+        .btn { padding: 0.6rem 1.2rem; background: var(--gold); color: var(--bg); border: none; border-radius: var(--radius-sm); font-family: var(--font-body); font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; }
+        .btn:hover { background: var(--gold-light); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-outline { background: none; border: 1px solid var(--border); color: var(--text-muted); }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
+        .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+        .btn-danger:hover { background: rgba(239,68,68,0.25); }
+
+        /* Add client form */
+        .add-form { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; display: none; }
+        .add-form.open { display: block; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.3rem; }
+        .form-input { width: 100%; padding: 0.65rem 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font-body); font-size: 0.85rem; outline: none; }
+        .form-input:focus { border-color: var(--gold); }
+        .form-input::placeholder { color: rgba(255,255,255,0.2); }
+        select.form-input { appearance: auto; }
+        .form-actions { display: flex; gap: 0.5rem; }
+        .form-error { color: var(--red); font-size: 0.8rem; margin-bottom: 0.5rem; display: none; }
+
+        /* Client table */
+        .clients-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+        .c-table { width: 100%; border-collapse: collapse; }
+        .c-table th { text-align: left; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+        .c-table td { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; }
+        .c-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .c-table tr:last-child td { border-bottom: none; }
+
+        .svc-badge { display: inline-block; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 3px; }
+        .badge-web_design { background: rgba(96,165,250,0.15); color: var(--blue); }
+        .badge-facebook_ads { background: rgba(129,140,248,0.15); color: #818cf8; }
+        .badge-google_ads { background: rgba(52,211,153,0.15); color: var(--green); }
+        .badge-seo { background: rgba(251,191,36,0.15); color: var(--yellow); }
+        .badge-gohighlevel { background: rgba(244,114,182,0.15); color: #f472b6; }
+        .badge-press { background: rgba(168,85,247,0.15); color: #a855f7; }
+        .badge-coaching { background: rgba(251,146,60,0.15); color: #fb923c; }
+
+        .status-badge { display: inline-block; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 3px; }
+        .status-pending { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+        .status-in_progress { background: rgba(96,165,250,0.15); color: var(--blue); }
+        .status-complete { background: rgba(52,211,153,0.15); color: var(--green); }
+
+        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--green); border-radius: 3px; transition: width 0.4s; }
+        .progress-wrap { display: flex; align-items: center; gap: 0.5rem; }
+        .progress-pct { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); min-width: 28px; }
+
+        .actions-cell { display: flex; gap: 0.5rem; align-items: center; }
+
+        .empty { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.9rem; }
+
+        /* Client detail modal/panel */
+        .detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; backdrop-filter: blur(4px); }
+        .detail-overlay.open { display: flex; justify-content: flex-end; }
+        .detail-panel { width: 100%; max-width: 600px; background: var(--bg); border-left: 1px solid var(--border); overflow-y: auto; padding: 2rem; }
+        .detail-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; float: right; }
+        .detail-close:hover { color: var(--gold); }
+        .detail-section { margin-bottom: 1.5rem; }
+        .detail-section h3 { font-size: 1rem; margin-bottom: 0.75rem; color: var(--gold); }
+
+        .task-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .task-item:last-child { border-bottom: none; }
+        .task-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all 0.2s; }
+        .task-check.done { background: var(--green); border-color: var(--green); color: #0a0a0a; }
+        .task-check.in-prog { border-color: var(--blue); }
+        .task-title { font-size: 0.8rem; flex: 1; }
+        .task-title.done { text-decoration: line-through; color: var(--text-muted); }
+        .task-del { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; opacity: 0.5; }
+        .task-del:hover { color: var(--red); opacity: 1; }
+        .task-group-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 0.5rem 0 0.25rem; margin-top: 0.5rem; }
+
+        .add-task-row { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+        .add-task-row input { flex: 1; padding: 0.5rem 0.6rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 0.8rem; font-family: var(--font-body); outline: none; }
+        .add-task-row input:focus { border-color: var(--gold); }
+        .add-task-row select { padding: 0.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 0.8rem; font-family: var(--font-body); }
+
+        .doc-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; font-size: 0.8rem; }
+        .doc-item a { color: var(--gold); }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.25rem 1rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .c-table th:nth-child(4), .c-table td:nth-child(4) { display: none; }
+            .detail-panel { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <a href="https://advancedmarketing.co"><img src="https://advancedmarketing.co/logo.png" alt="Advanced Marketing"></a>
+            <span class="header-badge">Admin</span>
+        </div>
+        <div class="header-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/admin.html" class="active">All Clients</a>
+            <a href="/tickets.html">Tickets</a>
+            <a href="/sales-reps.html">Sales Reps</a>
+            <a href="/goals.html">Goals</a>
+            <a href="/rep-welcome.html">Scripts / Onboarding</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/settings.html">Settings</a>
+            <button class="btn-logout" onclick="logout()">Log Out</button>
+        </div>
+    </div>
+
+    <div class="loading" id="loadingState"><div class="loading-spinner"></div></div>
+
+    <div class="container" id="mainContent" style="display:none;">
+        <div class="page-hdr">
+            <div>
+                <h1>All <span class="text-gradient">Clients</span></h1>
+                <p id="clientCount"></p>
+            </div>
+            <button class="btn" onclick="toggleAddForm()">+ Add Client</button>
+        </div>
+
+        <!-- Add client form -->
+        <div class="add-form" id="addForm">
+            <div class="form-error" id="addError"></div>
+            <form onsubmit="return addClient(event)">
+                <div class="form-grid">
+                    <div class="form-group"><label>Contact Name *</label><input type="text" class="form-input" id="addName" placeholder="John Smith" required></div>
+                    <div class="form-group"><label>Email *</label><input type="email" class="form-input" id="addEmail" placeholder="john@company.com" required></div>
+                    <div class="form-group"><label>Business Name</label><input type="text" class="form-input" id="addBusiness" placeholder="Company LLC"></div>
+                    <div class="form-group"><label>Service Type</label>
+                        <select class="form-input" id="addService">
+                            <option value="web_design">Web Design</option>
+                            <option value="facebook_ads">Facebook Ads</option>
+                            <option value="google_ads">Google Ads</option>
+                            <option value="seo">SEO</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Password</label><input type="password" class="form-input" id="addPassword" placeholder="Set a password" minlength="6"></div>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.85rem;color:var(--text-muted);">
+                        <input type="checkbox" id="addBookCall" style="width:16px;height:16px;accent-color:var(--gold);">
+                        Book a demo/onboarding call with Ben after creating
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn" id="addBtn">Create Client</button>
+                    <button type="button" class="btn btn-outline" onclick="toggleAddForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Client table -->
+        <div class="clients-card">
+            <table class="c-table">
+                <thead><tr>
+                    <th>Client</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th style="width:160px;">Progress</th>
+                    <th style="width:80px;"></th>
+                </tr></thead>
+                <tbody id="clientTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Detail slide-over panel -->
+    <div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+        <div class="detail-panel" id="detailPanel"></div>
+    </div>
+
+    <script>
+    var API = 'https://portal-api.advancedmarketing.co';
+    var token = localStorage.getItem('cp_token');
+    var SERVICE_LABELS = { web_design: 'Web Design', facebook_ads: 'Facebook Ads', google_ads: 'Google Ads', seo: 'SEO', gohighlevel: 'GoHighLevel', press: 'Press/PR', coaching: 'Coaching' };
+    var allClients = [];
+    var allTasks = {};
+
+    if (!token) window.location.href = '/';
+
+    function h(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; }
+    function logout() { localStorage.removeItem('cp_token'); localStorage.removeItem('cp_client'); window.location.href = '/'; }
+
+    function apiFetch(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({ Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, opts.headers || {});
+        return fetch(API + path, opts).then(function(r) {
+            if (r.status === 401) { logout(); return; }
+            if (r.status === 403) { alert('Admin access required.'); window.location.href = '/dashboard.html'; return; }
+            return r.json();
+        });
+    }
+
+    async function loadClients() {
+        var clients = await apiFetch('/api/admin/clients');
+        if (!clients) return;
+        allClients = clients;
+        document.getElementById('clientCount').textContent = clients.length + ' client' + (clients.length !== 1 ? 's' : '');
+
+        var tbody = document.getElementById('clientTableBody');
+        if (!clients.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty">No clients yet. Add your first client above.</td></tr>';
+        } else {
+            tbody.innerHTML = clients.map(function(c) {
+                var pct = c.tasks.total ? Math.round((c.tasks.done / c.tasks.total) * 100) : 0;
+                return '<tr>' +
+                    '<td><div style="font-weight:600;color:var(--text);">' + h(c.business_name || c.name) + '</div><div style="font-size:0.75rem;color:var(--text-muted);">' + h(c.name) + ' &middot; ' + h(c.email) + '</div></td>' +
+                    '<td><span class="svc-badge badge-' + c.service_type + '">' + SERVICE_LABELS[c.service_type] + '</span></td>' +
+                    '<td><span class="status-badge status-' + c.onboarding_status + '">' + c.onboarding_status.replace('_', ' ') + '</span></td>' +
+                    '<td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div><span class="progress-pct">' + pct + '%</span></div></td>' +
+                    '<td><div class="actions-cell"><button class="btn btn-outline btn-sm" onclick="openDetail(\'' + c.id + '\')">View</button></div></td>' +
+                '</tr>';
+            }).join('');
+        }
+
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('mainContent').style.display = '';
+    }
+
+    function toggleAddForm() {
+        document.getElementById('addForm').classList.toggle('open');
+    }
+
+    async function addClient(e) {
+        e.preventDefault();
+        var errEl = document.getElementById('addError');
+        errEl.style.display = 'none';
+        var btn = document.getElementById('addBtn');
+        btn.disabled = true; btn.textContent = 'Creating...';
+
+        var payload = {
+            name: document.getElementById('addName').value.trim(),
+            email: document.getElementById('addEmail').value.trim(),
+            business_name: document.getElementById('addBusiness').value.trim(),
+            service_type: document.getElementById('addService').value,
+            password: document.getElementById('addPassword').value || null,
+        };
+
+        var result = await apiFetch('/api/admin/clients', { method: 'POST', body: JSON.stringify(payload) });
+        btn.disabled = false; btn.textContent = 'Create Client';
+
+        if (result && result.error) {
+            errEl.textContent = result.error;
+            errEl.style.display = 'block';
+            return false;
+        }
+
+        // Book a call if checked
+        var bookCall = document.getElementById('addBookCall').checked;
+
+        // Reset form
+        document.getElementById('addName').value = '';
+        document.getElementById('addEmail').value = '';
+        document.getElementById('addBusiness').value = '';
+        document.getElementById('addPassword').value = '';
+        document.getElementById('addBookCall').checked = false;
+        toggleAddForm();
+        loadClients();
+
+        if (bookCall) {
+            window.open('https://calendly.com/ben-advancedmarketing?name=' + encodeURIComponent(payload.name) + '&email=' + encodeURIComponent(payload.email), '_blank');
+        }
+        return false;
+    }
+
+    // ============ DETAIL PANEL ============
+
+    var detailClientId = null;
+
+    async function openDetail(clientId) {
+        detailClientId = clientId;
+        document.getElementById('detailOverlay').classList.add('open');
+        document.getElementById('detailPanel').innerHTML = '<div style="text-align:center;padding:3rem;"><div class="loading-spinner"></div></div>';
+
+        var [client, tasks, docs, payAuths, invoices, subs, revenue] = await Promise.all([
+            apiFetch('/api/admin/clients').then(function(list) { return list.find(function(c) { return c.id === clientId; }); }),
+            apiFetch('/api/tasks?client_id=' + clientId),
+            apiFetch('/api/documents?client_id=' + clientId),
+            apiFetch('/api/admin/payment-auths?client_id=' + clientId),
+            apiFetch('/api/admin/invoices?client_id=' + clientId).catch(function() { return []; }),
+            apiFetch('/api/admin/subscriptions?client_id=' + clientId).catch(function() { return []; }),
+            apiFetch('/api/admin/clients/' + clientId + '/revenue').catch(function() { return { lifetime: 0, mrr: 0 }; }),
+        ]);
+
+        renderDetail(client, tasks || [], docs || [], payAuths || [], invoices || [], subs || [], revenue || { lifetime: 0, mrr: 0 });
+        selectedPubs = {};
+        loadPubGenres();
+    }
+
+    function closeDetail() {
+        document.getElementById('detailOverlay').classList.remove('open');
+        detailClientId = null;
+        loadClients(); // refresh table
+    }
+
+    function renderDetail(client, tasks, docs, payAuths, invoices, subs, revenue) {
+        var panel = document.getElementById('detailPanel');
+        var clientTasks = tasks.filter(function(t) { return t.assigned_to === 'client'; }).sort(function(a,b) { return a.sort_order - b.sort_order; });
+        var agencyTasks = tasks.filter(function(t) { return t.assigned_to === 'agency'; }).sort(function(a,b) { return a.sort_order - b.sort_order; });
+        var totalTasks = tasks.length;
+        var doneTasks = tasks.filter(function(t) { return t.status === 'complete'; }).length;
+        var pct = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+        panel.innerHTML =
+            '<button class="detail-close" onclick="closeDetail()">&times;</button>' +
+            '<div style="margin-bottom:1.5rem;">' +
+                '<h2 style="font-size:1.5rem;">' + h(client.business_name || client.name) + '</h2>' +
+                '<p style="font-size:0.85rem;color:var(--text-muted);">' + h(client.name) + ' &middot; ' + h(client.email) + '</p>' +
+                '<div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;align-items:center;">' +
+                    '<span class="svc-badge badge-' + client.service_type + '">' + SERVICE_LABELS[client.service_type] + '</span>' +
+                    '<select id="detailStatus" onchange="updateStatus(\'' + client.id + '\', this.value)" style="font-size:0.65rem;font-weight:700;padding:0.2rem 0.4rem;border-radius:3px;background:var(--bg-card);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);">' +
+                        '<option value="pending"' + (client.onboarding_status==='pending'?' selected':'') + '>Pending</option>' +
+                        '<option value="in_progress"' + (client.onboarding_status==='in_progress'?' selected':'') + '>In Progress</option>' +
+                        '<option value="complete"' + (client.onboarding_status==='complete'?' selected':'') + '>Complete</option>' +
+                    '</select>' +
+                '</div>' +
+                '<div style="margin-top:0.5rem;"><a href="https://calendly.com/ben-advancedmarketing?name=' + encodeURIComponent(client.name) + '&email=' + encodeURIComponent(client.email) + '" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.75rem;font-weight:600;color:var(--gold);background:rgba(201,169,98,0.1);padding:0.3rem 0.8rem;border-radius:4px;">📅 Book Demo Call</a></div>' +
+                '<div class="progress-wrap" style="margin-top:0.75rem;"><div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div><span class="progress-pct">' + pct + '%</span></div>' +
+                // Revenue stats
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;">' +
+                    '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1rem;">' +
+                        '<div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);">Lifetime Revenue</div>' +
+                        '<div style="font-family:var(--font-display);font-size:1.4rem;font-weight:600;color:var(--green);">$' + Number(revenue.lifetime || 0).toLocaleString('en-US', {minimumFractionDigits:2}) + '</div>' +
+                    '</div>' +
+                    '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1rem;">' +
+                        '<div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);">Monthly Recurring</div>' +
+                        '<div style="font-family:var(--font-display);font-size:1.4rem;font-weight:600;color:var(--gold);">$' + Number(revenue.mrr || 0).toLocaleString('en-US', {minimumFractionDigits:2}) + '/mo</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+
+            // Add Service
+            '<div class="detail-section">' +
+                '<h3>Add Service</h3>' +
+                '<p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem;">Load a task template and update the client\'s service type.</p>' +
+                '<div style="display:flex;gap:0.5rem;">' +
+                    '<select id="addServiceType" style="flex:1;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+                        '<option value="web_design">Web Design</option><option value="facebook_ads">Facebook Ads</option><option value="google_ads">Google Ads</option><option value="seo">SEO</option><option value="gohighlevel">GoHighLevel</option><option value="press">Press/PR</option><option value="coaching">Coaching</option>' +
+                    '</select>' +
+                    '<button class="btn btn-sm" onclick="addService()">Add Tasks</button>' +
+                '</div>' +
+                '<div id="addServiceMsg" style="font-size:0.75rem;margin-top:0.4rem;"></div>' +
+            '</div>' +
+
+            // Tasks
+            '<div class="detail-section">' +
+                '<h3>Tasks (' + doneTasks + '/' + totalTasks + ')</h3>' +
+                (clientTasks.length ? '<div class="task-group-label">Client Tasks</div>' + renderTaskItems(clientTasks) : '') +
+                (agencyTasks.length ? '<div class="task-group-label">Agency Tasks</div>' + renderTaskItems(agencyTasks) : '') +
+                (!tasks.length ? '<p style="font-size:0.8rem;color:var(--text-muted);">No tasks yet. Use "Add Service" above to load a template.</p>' : '') +
+                '<div class="add-task-row">' +
+                    '<input type="text" id="newTaskTitle" placeholder="Add a task...">' +
+                    '<select id="newTaskAssignee"><option value="client">Client</option><option value="agency">Agency</option></select>' +
+                    '<button class="btn btn-sm" onclick="addTask()">Add</button>' +
+                '</div>' +
+            '</div>' +
+
+            // Invoices
+            '<div class="detail-section">' +
+                '<h3>Invoices</h3>' +
+                '<div id="invoiceList">' +
+                (invoices.length ? invoices.map(function(inv) {
+                    var statusCls = inv.status === 'paid' ? 'color:var(--green)' : (inv.status === 'open' ? 'color:var(--yellow)' : 'color:var(--text-muted)');
+                    return '<div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.8rem;">' +
+                        '<span style="flex:1;color:var(--text-muted);">' + h(inv.description || inv.number || 'Invoice') + '</span>' +
+                        '<span style="font-weight:600;color:var(--text);">$' + Number(inv.amount).toFixed(2) + '</span>' +
+                        '<span style="' + statusCls + ';font-weight:600;font-size:0.7rem;text-transform:uppercase;">' + inv.status + '</span>' +
+                        (inv.hosted_url ? '<a href="' + inv.hosted_url + '" target="_blank" style="font-size:0.7rem;">View</a> ' : '') +
+                        (inv.status === 'open' ? '<button onclick="resendInvoice(\'' + inv.id + '\')" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.7rem;font-weight:600;">Resend</button> ' : '') +
+                        (inv.status === 'open' ? '<button onclick="voidInvoice(\'' + inv.id + '\')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.7rem;">Void</button>' : '') +
+                    '</div>';
+                }).join('') : '<p style="font-size:0.8rem;color:var(--text-muted);">No invoices yet.</p>') +
+                '</div>' +
+                // Create invoice form
+                '<div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);">' +
+                    '<p style="font-size:0.7rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">New Invoice</p>' +
+                    '<div id="invoiceLines"><div class="inv-line" style="display:flex;gap:0.5rem;margin-bottom:0.4rem;">' +
+                        '<input type="text" class="inv-desc" placeholder="Description" style="flex:2;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+                        '<input type="number" class="inv-amt" placeholder="Amount" step="0.01" min="1" style="flex:1;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+                    '</div></div>' +
+                    '<div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">' +
+                        '<button class="btn btn-outline btn-sm" onclick="addInvoiceLine()" style="font-size:0.65rem;">+ Line Item</button>' +
+                        '<input type="text" id="invMemo" placeholder="Memo (optional)" style="flex:1;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);min-width:120px;">' +
+                        '<select id="invDueDays" style="padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"><option value="1">Due on receipt</option><option value="7">Due 7 days</option><option value="14" selected>Due 14 days</option><option value="30">Due 30 days</option></select>' +
+                        '<button class="btn btn-sm" onclick="sendInvoice()" id="sendInvBtn">Send Invoice</button>' +
+                    '</div>' +
+                    '<div id="invMsg" style="font-size:0.75rem;margin-top:0.4rem;"></div>' +
+                '</div>' +
+            '</div>' +
+
+            // Press Publications Billing
+            '<div class="detail-section">' +
+                '<h3>Press Publications</h3>' +
+                '<p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.75rem;">Search 1,200+ publications. Select items to invoice this client.</p>' +
+                '<div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">' +
+                    '<input type="text" id="pubSearch" placeholder="Search publication name..." oninput="searchPubs()" style="flex:2;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+                    '<select id="pubGenre" onchange="searchPubs()" style="padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"><option value="">All Genres</option></select>' +
+                '</div>' +
+                '<div id="pubResults" style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;margin-bottom:0.75rem;"></div>' +
+                '<div id="pubSelected" style="margin-bottom:0.5rem;"></div>' +
+                '<div style="display:flex;gap:0.5rem;align-items:center;">' +
+                    '<select id="pubDueDays" style="padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"><option value="1">Due on receipt</option><option value="7" selected>Due 7 days</option><option value="14">Due 14 days</option><option value="30">Due 30 days</option></select>' +
+                    '<button class="btn btn-sm" onclick="billPubs()" id="billPubsBtn" disabled>Send Invoice</button>' +
+                    '<span id="pubTotal" style="font-size:0.85rem;font-weight:600;color:var(--gold);"></span>' +
+                '</div>' +
+                '<div id="pubMsg" style="font-size:0.75rem;margin-top:0.4rem;"></div>' +
+            '</div>' +
+
+            // Recurring Subscriptions
+            '<div class="detail-section">' +
+                '<h3>Recurring Subscriptions</h3>' +
+                (subs.length ? subs.map(function(s) {
+                    var statusColor = s.status === 'active' ? 'var(--green)' : (s.status === 'canceled' || s.cancel_at_period_end ? 'var(--red)' : 'var(--text-muted)');
+                    return '<div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.8rem;">' +
+                        '<span style="flex:1;color:var(--text-muted);">' + h(s.description) + '</span>' +
+                        '<span style="font-weight:600;color:var(--text);">$' + Number(s.amount).toFixed(2) + '/' + s.interval + '</span>' +
+                        '<span style="color:' + statusColor + ';font-weight:600;font-size:0.7rem;text-transform:uppercase;">' + (s.cancel_at_period_end ? 'canceling' : s.status) + '</span>' +
+                        (s.status === 'active' && !s.cancel_at_period_end ? '<button class="btn btn-sm btn-danger" onclick="cancelSub(\'' + s.id + '\')">Cancel</button>' : '') +
+                    '</div>';
+                }).join('') : '<p style="font-size:0.8rem;color:var(--text-muted);">No active subscriptions.</p>') +
+                // Create subscription form
+                '<div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);">' +
+                    '<p style="font-size:0.7rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">New Subscription</p>' +
+                    '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;">' +
+                        '<input type="text" id="subDesc" placeholder="Description (e.g. Monthly SEO)" style="flex:2;min-width:140px;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+                        '<input type="number" id="subAmt" placeholder="Amount" step="0.01" min="1" style="flex:1;min-width:80px;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+                    '</div>' +
+                    '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;">' +
+                        '<select id="subInterval" style="padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="biannually">Bi-Annually</option><option value="annually">Annually</option></select>' +
+                        '<input type="date" id="subAnchor" title="First billing date" style="padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+                        '<select id="subDueDays" style="padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"><option value="1">Due on receipt</option><option value="7" selected>Due in 7 days</option><option value="14">Due in 14 days</option><option value="30">Due in 30 days</option></select>' +
+                        '<button class="btn btn-sm" onclick="createSub()" id="createSubBtn">Create</button>' +
+                    '</div>' +
+                    '<p style="font-size:0.65rem;color:var(--text-muted);margin-top:0.4rem;">Client receives a Stripe invoice email each billing cycle. No card on file needed.</p>' +
+                    '<div id="subMsg" style="font-size:0.75rem;margin-top:0.4rem;"></div>' +
+                '</div>' +
+            '</div>' +
+
+            // Project Links
+            '<div class="detail-section">' +
+                '<h3>Project Links</h3>' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">' +
+                    '<div><label style="font-size:0.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">GitHub Repo</label>' +
+                    '<input type="text" id="projGithub" value="' + h(client.github_repo || '') + '" placeholder="bensblueprints/repo-name" style="width:100%;margin-top:0.2rem;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"></div>' +
+                    '<div><label style="font-size:0.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Live URL</label>' +
+                    '<input type="text" id="projUrl" value="' + h(client.hosting_url || '') + '" placeholder="https://client-site.com" style="width:100%;margin-top:0.2rem;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"></div>' +
+                    '<div><label style="font-size:0.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Hosting Type</label>' +
+                    '<select id="projHostType" style="width:100%;margin-top:0.2rem;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+                        '<option value="netlify"' + (client.hosting_type==='netlify'?' selected':'') + '>Netlify</option>' +
+                        '<option value="server"' + (client.hosting_type==='server'?' selected':'') + '>Server (Docker)</option>' +
+                        '<option value="other"' + (client.hosting_type==='other'?' selected':'') + '>Other</option>' +
+                    '</select></div>' +
+                    '<div><label style="font-size:0.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Netlify Site ID / Server IP</label>' +
+                    '<input type="text" id="projServerId" value="' + h(client.netlify_site_id || client.server_ip || '') + '" placeholder="site-id or IP" style="width:100%;margin-top:0.2rem;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"></div>' +
+                '</div>' +
+                '<button class="btn btn-sm" onclick="saveProjectLinks()" style="margin-top:0.75rem;">Save Project Links</button>' +
+                '<span id="projMsg" style="font-size:0.75rem;margin-left:0.5rem;"></span>' +
+            '</div>' +
+
+            // Documents
+            '<div class="detail-section">' +
+                '<h3>Documents (' + docs.length + ')</h3>' +
+                (docs.length ? docs.map(function(d) {
+                    return '<div class="doc-item"><span style="color:var(--gold);">📄</span> <a href="' + API + '/api/documents/' + d.id + '/download" target="_blank">' + h(d.file_name) + '</a> <span style="font-size:0.7rem;color:var(--text-muted);">' + d.document_type + ' &middot; ' + d.uploaded_by + '</span></div>';
+                }).join('') : '<p style="font-size:0.8rem;color:var(--text-muted);">No documents uploaded yet.</p>') +
+            '</div>' +
+
+            // Google Drive
+            (client.google_drive_folder_url ?
+                '<div class="detail-section"><h3>Google Drive</h3><a href="' + h(client.google_drive_folder_url) + '" target="_blank" style="font-size:0.85rem;">' + h(client.google_drive_folder_url) + '</a></div>' : '') +
+
+            // Payment Auths
+            (payAuths.length ?
+                '<div class="detail-section"><h3>Payment Authorizations</h3>' +
+                payAuths.map(function(pa) {
+                    return '<div style="padding:0.5rem 0;border-bottom:1px solid var(--border);">' +
+                        '<div style="font-size:0.85rem;">' + h(pa.cardholder_name) + ' &middot; •••• ' + h(pa.last_four_digits) + ' (' + h(pa.card_brand) + ')</div>' +
+                        '<div style="font-size:0.75rem;color:var(--text-muted);">' + pa.platform + ' &middot; ' + fmtDate(pa.submitted_at) +
+                        (pa.viewed_by_agency ? ' &middot; <span style="color:var(--green);">Viewed</span>' : ' &middot; <button class="btn btn-sm btn-outline" onclick="markPayViewed(\'' + pa.id + '\')">Mark Viewed</button>') +
+                        '</div>' +
+                        (pa.authorization_note ? '<div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;">' + h(pa.authorization_note) + '</div>' : '') +
+                    '</div>';
+                }).join('') + '</div>' : '') +
+
+            // Edit Client Info
+            '<div class="detail-section">' +
+                '<h3>Edit Client Info</h3>' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">' +
+                    '<div><label style="font-size:0.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Contact Name</label>' +
+                    '<input type="text" id="editName" value="' + h(client.name || '') + '" placeholder="John Smith" style="width:100%;margin-top:0.2rem;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"></div>' +
+                    '<div><label style="font-size:0.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Email Address</label>' +
+                    '<input type="email" id="editEmail" value="' + h(client.email || '') + '" placeholder="john@company.com" style="width:100%;margin-top:0.2rem;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"></div>' +
+                    '<div style="grid-column:span 2;"><label style="font-size:0.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Business Name</label>' +
+                    '<input type="text" id="editBusiness" value="' + h(client.business_name || '') + '" placeholder="Company LLC" style="width:100%;margin-top:0.2rem;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);"></div>' +
+                '</div>' +
+                '<button class="btn btn-sm" onclick="saveClientInfo()" style="margin-top:0.75rem;">Save Client Info</button>' +
+                '<span id="clientInfoMsg" style="font-size:0.75rem;margin-left:0.5rem;"></span>' +
+            '</div>' +
+
+            // Client since + Delete
+            '<div class="detail-section" style="margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);">' +
+                '<p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;">Client since ' + fmtDate(client.created_at) + '</p>' +
+                '<div id="deleteZone">' +
+                    '<button class="btn btn-danger btn-sm" onclick="deleteStep1()">Delete Client</button>' +
+                '</div>' +
+            '</div>';
+    }
+
+    function renderTaskItems(tasks) {
+        return tasks.map(function(t) {
+            var isDone = t.status === 'complete';
+            var isInProg = t.status === 'in_progress';
+            var checkCls = isDone ? 'task-check done' : (isInProg ? 'task-check in-prog' : 'task-check');
+            return '<div class="task-item">' +
+                '<div class="' + checkCls + '" onclick="cycleTask(\'' + t.id + '\',\'' + t.status + '\')">' + (isDone ? '✓' : '') + '</div>' +
+                '<span class="task-title' + (isDone ? ' done' : '') + '">' + h(t.title) + '</span>' +
+                '<button class="task-del" onclick="deleteTask(\'' + t.id + '\')">&times;</button>' +
+            '</div>';
+        }).join('');
+    }
+
+    async function cycleTask(id, current) {
+        var next = { pending: 'in_progress', in_progress: 'complete', complete: 'pending' };
+        await apiFetch('/api/tasks/' + id, { method: 'PATCH', body: JSON.stringify({ status: next[current] }) });
+        openDetail(detailClientId);
+    }
+
+    async function deleteTask(id) {
+        await apiFetch('/api/tasks/' + id, { method: 'DELETE' });
+        openDetail(detailClientId);
+    }
+
+    async function addTask() {
+        var title = document.getElementById('newTaskTitle').value.trim();
+        var assignee = document.getElementById('newTaskAssignee').value;
+        if (!title) return;
+        await apiFetch('/api/tasks', { method: 'POST', body: JSON.stringify({ client_id: detailClientId, title: title, assigned_to: assignee }) });
+        document.getElementById('newTaskTitle').value = '';
+        openDetail(detailClientId);
+    }
+
+    async function updateStatus(clientId, status) {
+        await apiFetch('/api/admin/clients/' + clientId, { method: 'PATCH', body: JSON.stringify({ onboarding_status: status }) });
+    }
+
+    async function markPayViewed(id) {
+        await apiFetch('/api/admin/payment-auths/' + id, { method: 'PATCH', body: JSON.stringify({ viewed_by_agency: true }) });
+        openDetail(detailClientId);
+    }
+
+    // ============ PUBLICATIONS ============
+    var selectedPubs = {};
+    var pubSearchTimeout = null;
+
+    // Load genres and initial publications on detail open
+    async function loadPubGenres() {
+        var genres = await apiFetch('/api/admin/publications/genres');
+        var sel = document.getElementById('pubGenre');
+        if (!sel) return;
+        sel.innerHTML = '<option value="">All Genres</option>';
+        (genres || []).forEach(function(g) { sel.innerHTML += '<option value="' + h(g) + '">' + h(g) + '</option>'; });
+        // Load initial browse results
+        searchPubs();
+    }
+
+    function searchPubs() {
+        clearTimeout(pubSearchTimeout);
+        pubSearchTimeout = setTimeout(async function() {
+            var q = (document.getElementById('pubSearch') || {}).value || '';
+            var genre = (document.getElementById('pubGenre') || {}).value || '';
+            var params = ['limit=100'];
+            if (q.trim()) params.push('q=' + encodeURIComponent(q.trim()));
+            if (genre) params.push('genre=' + encodeURIComponent(genre));
+            var pubs = await apiFetch('/api/admin/publications?' + params.join('&'));
+            renderPubResults(pubs || []);
+        }, 300);
+    }
+
+    function renderPubResults(pubs) {
+        var el = document.getElementById('pubResults');
+        if (!pubs.length) { el.innerHTML = '<div style="padding:1rem;text-align:center;font-size:0.8rem;color:var(--text-muted);">No publications found.</div>'; return; }
+        el.innerHTML = pubs.map(function(p) {
+            var isSelected = !!selectedPubs[p.id];
+            return '<div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;' + (isSelected ? 'background:rgba(201,169,98,0.08);' : '') + '" onclick="togglePub(\'' + p.id + '\',' + p.price + ',\'' + h(p.name).replace(/'/g, "\\'") + '\',' + Math.ceil(p.price * 0.5) + ')">' +
+                '<div style="width:16px;height:16px;border-radius:3px;border:2px solid ' + (isSelected ? 'var(--gold)' : 'rgba(255,255,255,0.15)') + ';background:' + (isSelected ? 'var(--gold)' : 'transparent') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#0a0a0a;">' + (isSelected ? '✓' : '') + '</div>' +
+                '<div style="flex:1;min-width:0;">' +
+                    '<div style="font-size:0.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + h(p.name) + '</div>' +
+                    '<div style="font-size:0.65rem;color:var(--text-muted);">' + h(p.genre) + ' &middot; DA ' + p.domain_authority + ' &middot; DR ' + p.domain_rating + ' &middot; ' + h(p.region) + (p.dofollow ? ' &middot; DoFollow' : '') + '</div>' +
+                '</div>' +
+                '<div style="font-weight:700;color:var(--gold);font-size:0.85rem;flex-shrink:0;">$' + Number(p.price).toFixed(0) + '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    function togglePub(id, price, name, minPrice) {
+        if (selectedPubs[id]) { delete selectedPubs[id]; }
+        else { selectedPubs[id] = { price: price, name: name, listPrice: price, minPrice: minPrice || Math.ceil(price * 0.5) }; }
+        updatePubSelection();
+        searchPubs();
+    }
+
+    function removePub(id) {
+        delete selectedPubs[id];
+        updatePubSelection();
+        searchPubs();
+    }
+
+    function editPubPrice(id) {
+        var pub = selectedPubs[id];
+        if (!pub) return;
+        var newPrice = prompt('Edit price for ' + pub.name + '\nList: $' + pub.listPrice + ' | Min (50%): $' + pub.minPrice, pub.price);
+        if (newPrice === null) return;
+        newPrice = parseFloat(newPrice);
+        if (isNaN(newPrice) || newPrice < pub.minPrice) {
+            alert('Price cannot be less than $' + pub.minPrice + ' (50% of list price $' + pub.listPrice + ')');
+            return;
+        }
+        selectedPubs[id].price = newPrice;
+        updatePubSelection();
+    }
+
+    function updatePubSelection() {
+        var ids = Object.keys(selectedPubs);
+        var total = 0;
+        ids.forEach(function(id) { total += selectedPubs[id].price; });
+        document.getElementById('pubTotal').textContent = ids.length ? ids.length + ' selected — $' + total.toLocaleString() : '';
+        document.getElementById('billPubsBtn').disabled = ids.length === 0;
+        var selEl = document.getElementById('pubSelected');
+        if (!ids.length) { selEl.innerHTML = ''; return; }
+        selEl.innerHTML = ids.map(function(id) {
+            var p = selectedPubs[id];
+            var edited = p.price !== p.listPrice;
+            return '<span style="display:inline-flex;align-items:center;gap:0.3rem;background:rgba(201,169,98,0.1);color:var(--gold);padding:0.2rem 0.5rem;border-radius:3px;font-size:0.7rem;margin:0.15rem;">' +
+                h(p.name) + ' <strong>$' + p.price + '</strong>' + (edited ? '<span style="color:var(--text-muted);text-decoration:line-through;font-size:0.6rem;">$' + p.listPrice + '</span>' : '') +
+                '<button onclick="editPubPrice(\'' + id + '\')" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.65rem;text-decoration:underline;">edit</button>' +
+                '<button onclick="removePub(\'' + id + '\')" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.9rem;">&times;</button>' +
+            '</span>';
+        }).join('');
+    }
+
+    async function billPubs() {
+        var ids = Object.keys(selectedPubs);
+        if (!ids.length) return;
+        var btn = document.getElementById('billPubsBtn');
+        var msg = document.getElementById('pubMsg');
+        btn.disabled = true; btn.textContent = 'Sending...';
+        msg.textContent = '';
+        // Send custom prices for each publication
+        var priceOverrides = {};
+        ids.forEach(function(id) { priceOverrides[id] = selectedPubs[id].price; });
+        var result = await apiFetch('/api/admin/publications/bill', { method: 'POST', body: JSON.stringify({
+            client_id: detailClientId,
+            publication_ids: ids,
+            price_overrides: priceOverrides,
+            due_days: document.getElementById('pubDueDays').value,
+        })});
+        btn.disabled = false; btn.textContent = 'Send Invoice';
+        if (result && result.number) {
+            msg.innerHTML = '<span style="color:var(--green);">Invoice ' + h(result.number) + ' sent! ' + result.publications + ' publication(s) — $' + Number(result.amount).toFixed(2) + '</span>';
+            selectedPubs = {};
+            updatePubSelection();
+            setTimeout(function() { openDetail(detailClientId); }, 1500);
+        } else {
+            msg.textContent = (result && result.error) || 'Failed'; msg.style.color = 'var(--red)';
+        }
+    }
+
+    // ============ INVOICE ACTIONS ============
+    async function resendInvoice(id) {
+        var result = await apiFetch('/api/admin/invoices/' + id + '/resend', { method: 'POST' });
+        if (result && result.success) { alert('Invoice resent!'); }
+        else { alert((result && result.error) || 'Failed to resend'); }
+    }
+
+    async function voidInvoice(id) {
+        if (!confirm('Void this invoice? This cannot be undone.')) return;
+        var result = await apiFetch('/api/admin/invoices/' + id + '/void', { method: 'POST' });
+        if (result && result.success) { openDetail(detailClientId); }
+        else { alert((result && result.error) || 'Failed to void'); }
+    }
+
+    // ============ DELETE CLIENT (triple confirm) ============
+    function deleteStep1() {
+        var zone = document.getElementById('deleteZone');
+        zone.innerHTML =
+            '<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:1rem;margin-top:0.5rem;">' +
+                '<p style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:0.5rem;">Are you sure you want to delete this client?</p>' +
+                '<p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.75rem;">This will cancel all subscriptions, remove all data, and send a termination letter.</p>' +
+                '<div style="display:flex;gap:0.5rem;">' +
+                    '<button class="btn btn-danger btn-sm" onclick="deleteStep2()">Yes, I\'m sure</button>' +
+                    '<button class="btn btn-outline btn-sm" onclick="deleteCancel()">Cancel</button>' +
+                '</div>' +
+            '</div>';
+    }
+
+    function deleteStep2() {
+        var zone = document.getElementById('deleteZone');
+        zone.innerHTML =
+            '<div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:1rem;margin-top:0.5rem;">' +
+                '<p style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:0.5rem;">This cannot be undone.</p>' +
+                '<p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.75rem;">The client will receive a formal termination email. All tasks, documents, and payment records will be permanently deleted.</p>' +
+                '<div style="display:flex;gap:0.5rem;">' +
+                    '<button class="btn btn-danger btn-sm" onclick="deleteStep3()">I understand, continue</button>' +
+                    '<button class="btn btn-outline btn-sm" onclick="deleteCancel()">Cancel</button>' +
+                '</div>' +
+            '</div>';
+    }
+
+    function deleteStep3() {
+        var zone = document.getElementById('deleteZone');
+        zone.innerHTML =
+            '<div style="background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.4);border-radius:8px;padding:1rem;margin-top:0.5rem;">' +
+                '<p style="font-size:0.85rem;color:var(--red);font-weight:700;margin-bottom:0.5rem;">FINAL CONFIRMATION</p>' +
+                '<p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem;">Type the client\'s email to confirm deletion:</p>' +
+                '<input type="text" id="deleteConfirmEmail" placeholder="Type email address here" style="width:100%;padding:0.5rem;background:var(--bg);border:1px solid rgba(239,68,68,0.3);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);margin-bottom:0.75rem;">' +
+                '<div style="display:flex;gap:0.5rem;">' +
+                    '<button class="btn btn-danger btn-sm" onclick="executeDelete()" id="finalDeleteBtn">Delete permanently & send termination</button>' +
+                    '<button class="btn btn-outline btn-sm" onclick="deleteCancel()">Cancel</button>' +
+                '</div>' +
+                '<div id="deleteMsg" style="font-size:0.75rem;margin-top:0.4rem;"></div>' +
+            '</div>';
+    }
+
+    function deleteCancel() {
+        document.getElementById('deleteZone').innerHTML = '<button class="btn btn-danger btn-sm" onclick="deleteStep1()">Delete Client</button>';
+    }
+
+    async function executeDelete() {
+        var typed = document.getElementById('deleteConfirmEmail').value.trim().toLowerCase();
+        var msg = document.getElementById('deleteMsg');
+        var btn = document.getElementById('finalDeleteBtn');
+
+        // Get current client email from panel header
+        var clientEmail = '';
+        try {
+            var clients = await apiFetch('/api/admin/clients');
+            var c = clients.find(function(x) { return x.id === detailClientId; });
+            if (c) clientEmail = c.email.toLowerCase();
+        } catch(e) {}
+
+        if (!typed || typed !== clientEmail) {
+            msg.textContent = 'Email does not match. Type: ' + clientEmail;
+            msg.style.color = 'var(--red)';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Deleting...';
+        msg.textContent = '';
+
+        var result = await apiFetch('/api/admin/clients/' + detailClientId, { method: 'DELETE' });
+        if (result && result.success) {
+            msg.textContent = result.message;
+            msg.style.color = 'var(--green)';
+            setTimeout(function() { closeDetail(); }, 1500);
+        } else {
+            msg.textContent = (result && result.error) || 'Failed to delete.';
+            msg.style.color = 'var(--red)';
+            btn.disabled = false;
+            btn.textContent = 'Delete permanently & send termination';
+        }
+    }
+
+    // ============ SUBSCRIPTIONS ============
+    async function createSub() {
+        var desc = document.getElementById('subDesc').value.trim();
+        var amt = document.getElementById('subAmt').value;
+        var interval = document.getElementById('subInterval').value;
+        var anchor = document.getElementById('subAnchor').value;
+        var dueDays = document.getElementById('subDueDays').value;
+        var msg = document.getElementById('subMsg');
+        var btn = document.getElementById('createSubBtn');
+        if (!desc || !amt) { msg.textContent = 'Description and amount required.'; msg.style.color = 'var(--red)'; return; }
+        btn.disabled = true; btn.textContent = 'Creating...';
+        msg.textContent = '';
+        var payload = { client_id: detailClientId, description: desc, amount: parseFloat(amt), interval: interval, days_until_due: parseInt(dueDays) };
+        if (anchor) payload.billing_anchor = anchor;
+        var result = await apiFetch('/api/admin/subscriptions', { method: 'POST', body: JSON.stringify(payload) });
+        btn.disabled = false; btn.textContent = 'Create';
+        if (result && result.id) {
+            var freqLabel = { weekly:'week', monthly:'month', quarterly:'quarter', biannually:'6 months', annually:'year' };
+            msg.innerHTML = '<span style="color:var(--green);">Subscription created! $' + Number(result.amount).toFixed(2) + ' every ' + (freqLabel[interval] || interval) + '</span>';
+            setTimeout(function() { openDetail(detailClientId); }, 1000);
+        } else {
+            msg.textContent = (result && result.error) || 'Failed'; msg.style.color = 'var(--red)';
+        }
+    }
+
+    async function cancelSub(subId) {
+        var result = await apiFetch('/api/admin/subscriptions/' + subId + '/cancel', { method: 'POST' });
+        if (result && result.success) { openDetail(detailClientId); }
+        else { alert((result && result.error) || 'Failed to cancel'); }
+    }
+
+    // ============ ADD SERVICE ============
+    async function addService() {
+        var svc = document.getElementById('addServiceType').value;
+        var msg = document.getElementById('addServiceMsg');
+        msg.textContent = 'Adding tasks...'; msg.style.color = 'var(--gold)';
+        var result = await apiFetch('/api/admin/clients/' + detailClientId + '/add-service', { method: 'POST', body: JSON.stringify({ service_type: svc }) });
+        if (result && result.success) {
+            msg.textContent = result.tasks_added + ' tasks added!'; msg.style.color = 'var(--green)';
+            setTimeout(function() { openDetail(detailClientId); }, 500);
+        } else {
+            msg.textContent = (result && result.error) || 'Failed'; msg.style.color = 'var(--red)';
+        }
+    }
+
+    // ============ INVOICES ============
+    function addInvoiceLine() {
+        var container = document.getElementById('invoiceLines');
+        var line = document.createElement('div');
+        line.className = 'inv-line';
+        line.style.cssText = 'display:flex;gap:0.5rem;margin-bottom:0.4rem;';
+        line.innerHTML = '<input type="text" class="inv-desc" placeholder="Description" style="flex:2;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+            '<input type="number" class="inv-amt" placeholder="Amount" step="0.01" min="1" style="flex:1;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.8rem;font-family:var(--font-body);">' +
+            '<button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;">&times;</button>';
+        container.appendChild(line);
+    }
+
+    async function sendInvoice() {
+        var btn = document.getElementById('sendInvBtn');
+        var msg = document.getElementById('invMsg');
+        var lines = document.querySelectorAll('#invoiceLines .inv-line');
+        var items = [];
+        lines.forEach(function(line) {
+            var desc = line.querySelector('.inv-desc').value.trim();
+            var amt = parseFloat(line.querySelector('.inv-amt').value);
+            if (desc && amt > 0) items.push({ description: desc, amount: amt });
+        });
+        if (!items.length) { msg.textContent = 'Add at least one line item with description and amount.'; msg.style.color = 'var(--red)'; return; }
+
+        btn.disabled = true; btn.textContent = 'Sending...';
+        msg.textContent = ''; msg.style.color = '';
+
+        var result = await apiFetch('/api/admin/invoices', { method: 'POST', body: JSON.stringify({
+            client_id: detailClientId,
+            items: items,
+            memo: document.getElementById('invMemo').value.trim(),
+            due_days: document.getElementById('invDueDays').value,
+        })});
+
+        btn.disabled = false; btn.textContent = 'Send Invoice';
+
+        if (result && result.number) {
+            msg.innerHTML = '<span style="color:var(--green);">Invoice ' + h(result.number) + ' sent! $' + Number(result.amount).toFixed(2) + '</span>' +
+                (result.hosted_url ? ' <a href="' + result.hosted_url + '" target="_blank" style="font-size:0.7rem;">View</a>' : '');
+            setTimeout(function() { openDetail(detailClientId); }, 1500);
+        } else {
+            msg.textContent = (result && result.error) || 'Failed to create invoice.'; msg.style.color = 'var(--red)';
+        }
+    }
+
+    // ============ PROJECT LINKS ============
+    async function saveProjectLinks() {
+        var hostType = document.getElementById('projHostType').value;
+        var payload = {
+            github_repo: document.getElementById('projGithub').value.trim(),
+            hosting_url: document.getElementById('projUrl').value.trim(),
+            hosting_type: hostType,
+        };
+        var serverId = document.getElementById('projServerId').value.trim();
+        if (hostType === 'netlify') payload.netlify_site_id = serverId;
+        else payload.server_ip = serverId;
+
+        var msg = document.getElementById('projMsg');
+        var result = await apiFetch('/api/admin/clients/' + detailClientId, { method: 'PATCH', body: JSON.stringify(payload) });
+        if (result && !result.error) {
+            msg.textContent = 'Saved!'; msg.style.color = 'var(--green)';
+        } else {
+            msg.textContent = (result && result.error) || 'Failed'; msg.style.color = 'var(--red)';
+        }
+        setTimeout(function() { msg.textContent = ''; }, 2000);
+    }
+
+    // ============ EDIT CLIENT INFO ============
+    async function saveClientInfo() {
+        var name = document.getElementById('editName').value.trim();
+        var email = document.getElementById('editEmail').value.trim();
+        var business = document.getElementById('editBusiness').value.trim();
+        var msg = document.getElementById('clientInfoMsg');
+
+        if (!email) {
+            msg.textContent = 'Email is required.'; msg.style.color = 'var(--red)';
+            return;
+        }
+
+        var payload = {
+            name: name,
+            email: email,
+            business_name: business,
+        };
+
+        var result = await apiFetch('/api/admin/clients/' + detailClientId, { method: 'PATCH', body: JSON.stringify(payload) });
+        if (result && !result.error) {
+            msg.textContent = 'Saved!'; msg.style.color = 'var(--green)';
+            // Refresh panel to show updated info in header
+            setTimeout(function() { openDetail(detailClientId); }, 1000);
+        } else {
+            msg.textContent = (result && result.error) || 'Failed'; msg.style.color = 'var(--red)';
+        }
+    }
+
+    loadClients();
+    </script>
+</body>
+</html>

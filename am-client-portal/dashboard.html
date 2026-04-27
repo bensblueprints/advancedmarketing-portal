@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Dashboard | Client Portal | Advanced Marketing</title>
+    <link rel="icon" type="image/x-icon" href="https://advancedmarketing.co/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a; --bg-card: #111111; --bg-card-hover: #161616;
+            --gold: #c9a962; --gold-light: #d4b978; --gold-dark: #a88c4a;
+            --text: #f5f3ef; --text-muted: #8a8880; --border: rgba(255,255,255,0.08);
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+            --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px;
+            --transition-fast: 0.3s ease;
+            --green: #34d399; --blue: #60a5fa; --yellow: #fbbf24; --red: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+        h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; }
+        .text-gradient { background: linear-gradient(135deg, var(--gold), var(--gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        a { color: var(--gold); text-decoration: none; }
+        a:hover { color: var(--gold-light); }
+
+        .header { padding: 1rem 2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,10,0.95); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px); }
+        .header-left { display: flex; align-items: center; gap: 1.5rem; }
+        .header img { height: 32px; }
+        .header-badge { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); background: rgba(201,169,98,0.1); padding: 0.25rem 0.6rem; border-radius: 4px; }
+        .header-user { display: flex; align-items: center; gap: 1rem; }
+        .header-user span { font-size: 0.85rem; color: var(--text-muted); }
+        .btn-logout { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 0.4rem 1rem; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all var(--transition-fast); }
+        .btn-logout:hover { border-color: var(--gold); color: var(--gold); }
+        .admin-link { font-size: 0.75rem; font-weight: 600; color: var(--gold); padding: 0.4rem 0.8rem; border: 1px solid rgba(201,169,98,0.3); border-radius: var(--radius-sm); }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        .loading { text-align: center; padding: 4rem 2rem; }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Welcome banner */
+        .welcome-banner { background: linear-gradient(135deg, rgba(201,169,98,0.12), rgba(201,169,98,0.04)); border: 1px solid rgba(201,169,98,0.2); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; position: relative; }
+        .welcome-banner .dismiss { position: absolute; top: 12px; right: 14px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; }
+        .welcome-banner .svc-badge { display: inline-block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 3px; margin-bottom: 0.75rem; }
+        .badge-web_design { background: rgba(96,165,250,0.15); color: var(--blue); }
+        .badge-facebook_ads { background: rgba(129,140,248,0.15); color: #818cf8; }
+        .badge-google_ads { background: rgba(52,211,153,0.15); color: var(--green); }
+        .badge-seo { background: rgba(251,191,36,0.15); color: var(--yellow); }
+        .badge-gohighlevel { background: rgba(244,114,182,0.15); color: #f472b6; }
+        .badge-press { background: rgba(168,85,247,0.15); color: #a855f7; }
+        .badge-coaching { background: rgba(251,146,60,0.15); color: #fb923c; }
+        .welcome-banner p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* Progress bar */
+        .progress-wrap { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; }
+        .progress-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--green); border-radius: 4px; transition: width 0.5s ease; }
+        .progress-pct { font-size: 0.85rem; font-weight: 700; color: var(--green); min-width: 36px; }
+
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; }
+        .stat-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; }
+        .stat-value { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; }
+
+        /* Section */
+        .section { margin-bottom: 2rem; }
+        .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .section-hdr h2 { font-size: 1.3rem; }
+
+        /* Card */
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+
+        /* Tasks */
+        .task-group-label { padding: 0.75rem 1.25rem; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+        .task-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.85rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .task-item:last-child { border-bottom: none; }
+        .task-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); cursor: pointer; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 11px; }
+        .task-check.done { background: var(--green); border-color: var(--green); color: #0a0a0a; }
+        .task-check.in-prog { border-color: var(--blue); }
+        .task-check.readonly { cursor: default; opacity: 0.6; }
+        .task-title { font-size: 0.85rem; flex: 1; }
+        .task-title.done { text-decoration: line-through; color: var(--text-muted); }
+
+        /* Google Drive */
+        .gdrive-input { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+        .gdrive-input input { flex: 1; padding: 0.6rem 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 0.85rem; outline: none; font-family: var(--font-body); }
+        .gdrive-input input:focus { border-color: var(--gold); }
+        .btn-sm { padding: 0.6rem 1rem; background: var(--gold); color: var(--bg); border: none; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.75rem; cursor: pointer; font-family: var(--font-body); text-transform: uppercase; letter-spacing: 0.04em; }
+        .btn-sm:hover { background: var(--gold-light); }
+        .gdrive-saved { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; font-size: 0.85rem; color: var(--green); }
+
+        /* Document upload */
+        .upload-slot { margin-bottom: 1rem; }
+        .upload-slot label { display: block; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; }
+        .upload-area { border: 2px dashed rgba(255,255,255,0.08); border-radius: var(--radius-sm); padding: 1rem; text-align: center; cursor: pointer; transition: border-color 0.2s; }
+        .upload-area:hover { border-color: var(--gold); }
+        .upload-area span { font-size: 0.8rem; color: var(--text-muted); }
+        .doc-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0; font-size: 0.8rem; }
+        .doc-item a { color: var(--gold); }
+        .doc-del { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; }
+        .doc-del:hover { color: var(--red); }
+
+        /* Payment instructions */
+        .pay-instructions ol { padding-left: 1.2rem; margin: 0.75rem 0; }
+        .pay-instructions li { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+        .pay-instructions .note { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 0.5rem; }
+
+        /* Calendly */
+        .calendly-frame { border-radius: var(--radius-sm); overflow: hidden; background: #fff; }
+
+        /* Message */
+        .msg-textarea { width: 100%; min-height: 80px; padding: 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font-body); font-size: 0.85rem; resize: vertical; outline: none; }
+        .msg-textarea:focus { border-color: var(--gold); }
+        .msg-textarea::placeholder { color: rgba(255,255,255,0.2); }
+        .msg-actions { display: flex; justify-content: flex-end; margin-top: 0.5rem; }
+        .msg-status { font-size: 0.8rem; margin-top: 0.4rem; text-align: right; }
+
+        /* Invoice table */
+        .inv-table { width: 100%; border-collapse: collapse; }
+        .inv-table th { text-align: left; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); }
+        .inv-table td { padding: 0.7rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; color: var(--text-muted); }
+        .inv-table tr:hover td { color: var(--text); }
+        .inv-paid { color: var(--green); font-weight: 600; }
+        .inv-open { color: var(--yellow); font-weight: 600; }
+
+        .empty { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.85rem; }
+        .footer { padding: 2rem; border-top: 1px solid var(--border); text-align: center; }
+        .footer p { font-size: 0.7rem; color: var(--text-muted); }
+        .btn-pay-link { display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: var(--bg); padding: 0.45rem 1rem; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.25rem 1rem; }
+            .header { padding: 0.75rem 1rem; }
+            .header-user span { display: none; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) { .stats-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <a href="https://advancedmarketing.co"><img src="https://advancedmarketing.co/logo.png" alt="Advanced Marketing"></a>
+            <span class="header-badge">Client Portal</span>
+        </div>
+        <div class="header-user">
+            <span id="headerEmail"></span>
+            <a href="/admin.html" class="admin-link" id="adminLink" style="display:none;">Admin</a>
+            <button class="btn-logout" onclick="logout()">Log Out</button>
+        </div>
+    </div>
+
+    <div class="loading" id="loadingState"><div class="loading-spinner"></div><p style="color:var(--text-muted);font-size:0.9rem;">Loading your portal...</p></div>
+
+    <div class="container" id="dashboard" style="display:none;">
+        <!-- Welcome banner (dismissible) -->
+        <div class="welcome-banner" id="welcomeBanner" style="display:none;">
+            <button class="dismiss" onclick="dismissWelcome()">&times;</button>
+            <div class="svc-badge" id="svcBadge"></div>
+            <p id="welcomeMsg"></p>
+        </div>
+
+        <!-- Welcome + Progress -->
+        <div style="margin-bottom:0.5rem;">
+            <h1 style="font-size:clamp(1.6rem,4vw,2.2rem);">Welcome, <span class="text-gradient" id="welcomeName"></span></h1>
+            <p style="color:var(--text-muted);font-size:0.9rem;">Here's your onboarding progress.</p>
+        </div>
+        <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-label">Tasks Done</div><div class="stat-value" id="statDone">0/0</div></div>
+            <div class="stat-card"><div class="stat-label">Total Paid</div><div class="stat-value" id="statPaid">$0</div></div>
+            <div class="stat-card"><div class="stat-label">Service</div><div class="stat-value" id="statService" style="font-size:1.1rem;">—</div></div>
+            <div class="stat-card"><div class="stat-label">Client Since</div><div class="stat-value" id="statSince">—</div></div>
+        </div>
+
+        <!-- Client Tasks -->
+        <div class="section">
+            <div class="section-hdr"><h2>Your Tasks</h2></div>
+            <div class="card" id="clientTasks"></div>
+        </div>
+
+        <!-- Agency Tasks -->
+        <div class="section">
+            <div class="section-hdr"><h2>What We're Working On</h2></div>
+            <div class="card" id="agencyTasks"></div>
+        </div>
+
+        <!-- Documents -->
+        <div class="section">
+            <div class="section-hdr"><h2>Documents &amp; Assets</h2></div>
+            <div class="card" style="padding:1.25rem;" id="docsSection"></div>
+        </div>
+
+        <!-- Google Drive -->
+        <div class="section">
+            <div class="section-hdr"><h2>Google Drive Folder</h2></div>
+            <div class="card" style="padding:1.25rem;" id="gdriveSection">
+                <p style="font-size:0.8rem;color:var(--text-muted);">Create a shared Google Drive folder and paste the link below so we can access your files.</p>
+                <div id="gdriveContent"></div>
+            </div>
+        </div>
+
+        <!-- Payment Method (FB/Google ads only) -->
+        <div class="section" id="paymentSection" style="display:none;">
+            <div class="section-hdr"><h2>Ad Spend Payment Method</h2></div>
+            <div class="card" style="padding:1.25rem;">
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem;">Your ads run on <strong>your</strong> card. We never charge your card directly — you attach it to your ad account.</p>
+                <div class="pay-instructions" id="payInstructions"></div>
+
+                <!-- Card on file authorization -->
+                <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border);" id="cardAuthSection">
+                    <p style="font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:0.25rem;">Put a Card on File</p>
+                    <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;">Securely authorize Advanced Marketing to manage your ad spend billing on your behalf. We only store the last 4 digits for verification — your full card details are never saved.</p>
+                    <div id="cardAuthForm">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
+                            <input type="text" id="authCardName" placeholder="Cardholder Name" style="padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;font-family:var(--font-body);outline:none;">
+                            <select id="authCardBrand" style="padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;font-family:var(--font-body);">
+                                <option value="Visa">Visa</option>
+                                <option value="Mastercard">Mastercard</option>
+                                <option value="Amex">American Express</option>
+                                <option value="Discover">Discover</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
+                            <input type="text" id="authCardLast4" placeholder="Last 4 Digits" maxlength="4" pattern="[0-9]{4}" style="padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;font-family:var(--font-body);outline:none;">
+                            <select id="authPlatform" style="padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;font-family:var(--font-body);">
+                                <option value="facebook">Facebook / Meta Ads</option>
+                                <option value="google">Google Ads</option>
+                            </select>
+                        </div>
+                        <textarea id="authNote" placeholder="Any notes (optional)" rows="2" style="width:100%;padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;font-family:var(--font-body);resize:vertical;outline:none;margin-bottom:0.5rem;"></textarea>
+                        <button class="btn-sm" onclick="submitCardAuth()" id="cardAuthBtn">Submit Card Authorization</button>
+                        <div id="cardAuthMsg" style="font-size:0.8rem;margin-top:0.4rem;"></div>
+                    </div>
+                    <div id="cardAuthSuccess" style="display:none;">
+                        <div style="display:flex;align-items:center;gap:0.5rem;color:var(--green);font-size:0.85rem;font-weight:600;">
+                            <span style="font-size:1.2rem;">&#10003;</span> Your card authorization has been received securely.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoices -->
+        <div class="section">
+            <div class="section-hdr">
+                <h2>Invoices &amp; Payments</h2>
+                <a href="https://advancedmarketing.co/pay/" class="btn-pay-link" target="_blank">Pay Invoice</a>
+            </div>
+            <div class="card" style="padding:0;overflow-x:auto;">
+                <table class="inv-table"><thead><tr><th>Description</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead><tbody id="invoiceBody"></tbody></table>
+            </div>
+        </div>
+
+        <!-- Schedule a Call -->
+        <div class="section">
+            <div class="section-hdr"><h2>Schedule a Call</h2></div>
+            <div class="card" style="padding:0;">
+                <div class="calendly-frame">
+                    <iframe src="https://calendly.com/ben-advancedmarketing?hide_gdpr_banner=1" width="100%" height="630" frameborder="0" title="Schedule a call"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Tickets -->
+        <div class="section">
+            <div class="section-hdr"><h2>Support</h2></div>
+            <div class="card" style="padding:1.25rem;">
+                <div id="ticketsList" style="margin-bottom:1rem;"></div>
+                <div style="border-top:1px solid var(--border);padding-top:1rem;">
+                    <p style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">New Message</p>
+                    <input type="text" id="ticketSubject" placeholder="Subject (optional)" style="width:100%;padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;font-family:var(--font-body);margin-bottom:0.5rem;outline:none;">
+                    <textarea class="msg-textarea" id="msgText" placeholder="Type your message to our team..."></textarea>
+                    <div class="msg-actions"><button class="btn-sm" id="sendBtn" onclick="sendMessage()">Send Message</button></div>
+                    <div class="msg-status" id="msgStatus"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer"><p>&copy; 2026 Advanced Marketing Limited. All rights reserved. &nbsp;|&nbsp; <a href="https://advancedmarketing.co/privacy-policy">Privacy</a> &nbsp;|&nbsp; <a href="https://advancedmarketing.co/terms-of-service">Terms</a></p></div>
+
+    <script>
+    var API = 'https://portal-api.advancedmarketing.co';
+    var token = localStorage.getItem('cp_token');
+    var clientData = null;
+
+    var SERVICE_LABELS = { web_design: 'Web Design', facebook_ads: 'Facebook Ads', google_ads: 'Google Ads', seo: 'SEO', gohighlevel: 'GoHighLevel', press: 'Press/PR', coaching: 'Coaching' };
+
+    var WELCOME_MESSAGES = {
+        web_design: "We're thrilled to be building your new website. To get started, we need a few things from you: your logo, a description of your business and services, and any images you have on hand. Don't worry if you don't have images or written content yet — we can create both for you. Check your task list below for the full checklist, and schedule a call any time if you have questions.",
+        facebook_ads: "Your Facebook ad campaigns are about to go live. We've already set up your ad account — your next step is to attach a payment method inside Meta Business Suite so your ads can run. You'll find step-by-step instructions below. Once that's done, we'll start building your first campaigns immediately.",
+        google_ads: "Your Google Ads account is ready and waiting. To launch, you'll need to attach a billing method to your Google Ads account. We've included instructions below to make this simple. The moment billing is confirmed, we start driving traffic to your business.",
+        seo: "SEO is a long game, and we're in it with you for the long haul. Over the next 30 to 90 days you'll start seeing measurable movement in your rankings. To get started, we need access to your website, Google Search Console, and Google Analytics. Check your task list for next steps, and don't hesitate to book a call with us any time.",
+        gohighlevel: "Welcome to Advanced Marketing! We're setting up your GoHighLevel CRM — your all-in-one platform for lead management, automated follow-ups, appointment booking, and reputation management. We'll need a few details from you to get your account configured. Check your task list below, and your login credentials will be sent once everything is ready.",
+        press: "Welcome to Advanced Marketing! We're excited to get your brand featured in the press. Our PR team will craft compelling press releases and pitch them to targeted media outlets. To get started, we need your bio, headshot, and a list of topics you can speak on. Check your task list below and we'll have your first placements in motion shortly.",
+        coaching: "Welcome to your coaching program with Benjamin Boyce! Over the coming weeks we'll work together to fix your sales process, automate operations, optimize conversions, and build your brand. Complete the intake questionnaire below and come to your first call prepared with your biggest challenges. Let's build something."
+    };
+
+    var FB_STEPS = ['Go to business.facebook.com and log in','Click the gear icon (Settings) in the bottom-left corner','Select "Payment Methods" under Business Settings','Click "Add Payment Method"','Enter your credit or debit card information','Click "Save" to confirm','Your ads will now charge to this card automatically'];
+    var GOOGLE_STEPS = ['Go to ads.google.com and sign in','Click the wrench icon (Tools) in the top navigation','Under "Billing", select "Settings"','Click "Payment Methods"','Click "Add Payment Method"','Enter your credit or debit card details','Set it as your primary payment method','Click "Save" — your account is now ready for ads to run'];
+
+    if (!token) { window.location.href = '/'; }
+
+    function h(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function fmtDate(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+    function fmtMoney(a) { return '$'+Number(a||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+    function apiFetch(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({ Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, opts.headers || {});
+        return fetch(API + path, opts).then(function(r) {
+            if (r.status === 401) { localStorage.removeItem('cp_token'); window.location.href = '/'; }
+            return r.json();
+        });
+    }
+
+    function logout() { localStorage.removeItem('cp_token'); localStorage.removeItem('cp_client'); window.location.href = '/'; }
+
+    async function init() {
+        try {
+            // Check if sales rep — show welcome on first visit, then admin
+            var meCheck = await apiFetch('/api/me');
+            if (meCheck && meCheck.role === 'sales_rep') {
+                if (!localStorage.getItem('rep_welcomed')) {
+                    localStorage.setItem('rep_welcomed', '1');
+                    window.location.href = '/rep-welcome.html';
+                } else {
+                    window.location.href = '/admin.html';
+                }
+                return;
+            }
+
+            var [me, tasks, docs, invoiceRes] = await Promise.all([
+                apiFetch('/api/me'),
+                apiFetch('/api/tasks'),
+                apiFetch('/api/documents'),
+                apiFetch('/api/client-invoices').catch(function() { return { invoices: [], payments: [] }; })
+            ]);
+            clientData = me;
+            render(me, tasks, docs, invoiceRes);
+        } catch (err) {
+            console.error(err);
+            document.getElementById('loadingState').innerHTML = '<p style="color:var(--red);">Failed to load. <a href="/" style="color:var(--gold);">Try logging in again.</a></p>';
+        }
+    }
+
+    function render(me, tasks, docs, invoiceData) {
+        // Header
+        document.getElementById('headerEmail').textContent = me.email;
+        if (me.is_admin) document.getElementById('adminLink').style.display = '';
+
+        // Welcome name
+        document.getElementById('welcomeName').textContent = me.business_name || me.name || 'Client';
+
+        // Welcome banner
+        if (!me.welcome_message_dismissed && WELCOME_MESSAGES[me.service_type]) {
+            var banner = document.getElementById('welcomeBanner');
+            var badge = document.getElementById('svcBadge');
+            badge.textContent = SERVICE_LABELS[me.service_type];
+            badge.className = 'svc-badge badge-' + me.service_type;
+            document.getElementById('welcomeMsg').textContent = WELCOME_MESSAGES[me.service_type];
+            banner.style.display = '';
+        }
+
+        // Progress
+        var clientTasks = tasks.filter(function(t) { return t.assigned_to === 'client'; });
+        var agencyTasks = tasks.filter(function(t) { return t.assigned_to === 'agency'; });
+        var totalTasks = tasks.length;
+        var doneTasks = tasks.filter(function(t) { return t.status === 'complete'; }).length;
+        var pct = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('progressPct').textContent = pct + '%';
+
+        // Stats
+        document.getElementById('statDone').textContent = doneTasks + '/' + totalTasks;
+        document.getElementById('statService').textContent = SERVICE_LABELS[me.service_type] || '—';
+        if (me.created_at) document.getElementById('statSince').textContent = new Date(me.created_at).toLocaleDateString('en-US',{month:'short',year:'numeric'});
+
+        var invoices = invoiceData.invoices || [];
+        var payments = invoiceData.payments || [];
+        var totalPaid = 0;
+        invoices.forEach(function(i) { totalPaid += i.amountPaid || 0; });
+        payments.forEach(function(p) { totalPaid += p.amount || 0; });
+        document.getElementById('statPaid').textContent = fmtMoney(totalPaid);
+
+        // Client tasks
+        renderTaskList('clientTasks', clientTasks, true);
+
+        // Agency tasks
+        renderTaskList('agencyTasks', agencyTasks, false);
+
+        // Documents
+        renderDocs(me, docs);
+
+        // Google Drive
+        renderGDrive(me);
+
+        // Payment section — always show card on file, instructions only for ads clients
+        document.getElementById('paymentSection').style.display = '';
+        if (me.service_type === 'facebook_ads' || me.service_type === 'google_ads') {
+            var steps = me.service_type === 'facebook_ads' ? FB_STEPS : GOOGLE_STEPS;
+            var platform = me.service_type === 'facebook_ads' ? 'Meta Business Suite' : 'Google Ads Manager';
+            document.getElementById('payInstructions').innerHTML =
+                '<p style="font-size:0.75rem;font-weight:600;color:var(--text);margin-bottom:0.5rem;">How to add your payment method in ' + platform + ':</p>' +
+                '<ol>' + steps.map(function(s) { return '<li>' + h(s) + '</li>'; }).join('') + '</ol>' +
+                '<p class="note">Advanced Marketing will NEVER have access to your card details. Your card is charged directly by ' + (me.service_type === 'facebook_ads' ? 'Meta' : 'Google') + '.</p>';
+        }
+
+        // Invoices
+        var allInv = [];
+        invoices.forEach(function(i) { allInv.push({ desc: i.description || i.number || 'Invoice', date: i.created, amount: i.amount, status: i.status, link: i.hostedUrl }); });
+        payments.forEach(function(p) { allInv.push({ desc: p.description, date: p.created, amount: p.amount, status: 'paid', link: null }); });
+        allInv.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+        var invBody = document.getElementById('invoiceBody');
+        if (!allInv.length) {
+            invBody.innerHTML = '<tr><td colspan="5" class="empty">No invoices yet.</td></tr>';
+        } else {
+            invBody.innerHTML = allInv.map(function(i) {
+                var cls = i.status === 'paid' ? 'inv-paid' : 'inv-open';
+                var actionHtml = '';
+                if (i.link && i.status === 'open') {
+                    actionHtml = '<a href="' + i.link + '" target="_blank" style="background:var(--gold);color:#0a0a0a;padding:0.3rem 0.8rem;border-radius:4px;font-weight:700;font-size:0.7rem;text-transform:uppercase;text-decoration:none;">Pay Now</a>';
+                } else if (i.link) {
+                    actionHtml = '<a href="' + i.link + '" target="_blank" style="font-size:0.75rem;font-weight:600;color:var(--gold);">View</a>';
+                }
+                return '<tr><td>' + h(i.desc) + '</td><td>' + fmtDate(i.date) + '</td><td style="font-weight:600;color:var(--text);">' + fmtMoney(i.amount) + '</td><td class="' + cls + '" style="text-transform:capitalize;">' + i.status + '</td><td style="text-align:right;">' + actionHtml + '</td></tr>';
+            }).join('');
+        }
+
+        // Show dashboard
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('dashboard').style.display = '';
+        loadTickets();
+    }
+
+    function renderTaskList(elId, tasks, canEdit) {
+        var el = document.getElementById(elId);
+        if (!tasks.length) { el.innerHTML = '<div class="empty">No tasks yet.</div>'; return; }
+        var sorted = tasks.slice().sort(function(a, b) { return a.sort_order - b.sort_order; });
+        el.innerHTML = sorted.map(function(t) {
+            var isDone = t.status === 'complete';
+            var isInProg = t.status === 'in_progress';
+            var checkCls = isDone ? 'task-check done' : (isInProg ? 'task-check in-prog' : 'task-check');
+            if (!canEdit) checkCls += ' readonly';
+            var onclick = canEdit ? ' onclick="toggleTask(\'' + t.id + '\',\'' + t.status + '\')"' : '';
+            return '<div class="task-item">' +
+                '<div class="' + checkCls + '"' + onclick + '>' + (isDone ? '✓' : '') + '</div>' +
+                '<span class="task-title' + (isDone ? ' done' : '') + '">' + h(t.title) + '</span>' +
+                '</div>';
+        }).join('');
+    }
+
+    async function toggleTask(id, currentStatus) {
+        var next = currentStatus === 'complete' ? 'pending' : 'complete';
+        await apiFetch('/api/tasks/' + id, { method: 'PATCH', body: JSON.stringify({ status: next }) });
+        init(); // reload
+    }
+
+    async function dismissWelcome() {
+        document.getElementById('welcomeBanner').style.display = 'none';
+        await apiFetch('/api/me', { method: 'PATCH', body: JSON.stringify({ welcome_message_dismissed: true }) });
+    }
+
+    function renderGDrive(me) {
+        var el = document.getElementById('gdriveContent');
+        if (me.google_drive_folder_url) {
+            el.innerHTML = '<div class="gdrive-saved"><span style="font-size:1.1rem;">✓</span> <a href="' + h(me.google_drive_folder_url) + '" target="_blank">Open Google Drive Folder</a></div>';
+        } else {
+            el.innerHTML = '<div class="gdrive-input"><input type="url" id="gdriveUrl" placeholder="https://drive.google.com/drive/folders/..."><button class="btn-sm" onclick="saveGDrive()">Save</button></div>';
+        }
+    }
+
+    async function saveGDrive() {
+        var url = document.getElementById('gdriveUrl').value.trim();
+        if (!url) return;
+        await apiFetch('/api/me', { method: 'PATCH', body: JSON.stringify({ google_drive_folder_url: url }) });
+        init();
+    }
+
+    function renderDocs(me, docs) {
+        var el = document.getElementById('docsSection');
+        var slots = me.service_type === 'web_design'
+            ? [{ type: 'logo', label: 'Logo' }, { type: 'brand_assets', label: 'Brand Assets' }, { type: 'images', label: 'Site Images' }]
+            : [{ type: 'brand_assets', label: 'Business Info / Brand Assets' }, { type: 'other', label: 'Additional Files' }];
+
+        el.innerHTML = slots.map(function(slot) {
+            var slotDocs = docs.filter(function(d) { return d.document_type === slot.type; });
+            var docsHtml = slotDocs.map(function(d) {
+                return '<div class="doc-item"><span style="color:var(--gold);">📄</span> <a href="' + API + '/api/documents/' + d.id + '/download" target="_blank">' + h(d.file_name) + '</a> <button class="doc-del" onclick="deleteDoc(\'' + d.id + '\')">&times;</button></div>';
+            }).join('');
+            return '<div class="upload-slot">' +
+                '<label>' + h(slot.label) + '</label>' +
+                '<div class="upload-area" onclick="document.getElementById(\'file_' + slot.type + '\').click()">' +
+                '<input type="file" multiple id="file_' + slot.type + '" style="display:none;" onchange="uploadFiles(this,\'' + slot.type + '\')">' +
+                '<span>Click to upload</span></div>' +
+                docsHtml + '</div>';
+        }).join('');
+    }
+
+    async function uploadFiles(input, docType) {
+        var files = input.files;
+        if (!files || !files.length) return;
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var reader = new FileReader();
+            reader.onload = async function(e) {
+                var base64 = e.target.result.split(',')[1];
+                await apiFetch('/api/documents', { method: 'POST', body: JSON.stringify({ file_name: file.name, file_data: base64, document_type: docType }) });
+                init();
+            };
+            reader.readAsDataURL(file);
+        }
+        input.value = '';
+    }
+
+    async function deleteDoc(id) {
+        await apiFetch('/api/documents/' + id, { method: 'DELETE' });
+        init();
+    }
+
+    async function submitCardAuth() {
+        var name = document.getElementById('authCardName').value.trim();
+        var last4 = document.getElementById('authCardLast4').value.trim();
+        var brand = document.getElementById('authCardBrand').value;
+        var platform = document.getElementById('authPlatform').value;
+        var note = document.getElementById('authNote').value.trim();
+        var msg = document.getElementById('cardAuthMsg');
+        var btn = document.getElementById('cardAuthBtn');
+        msg.textContent = '';
+
+        if (!name) { msg.textContent = 'Please enter the cardholder name.'; msg.style.color = 'var(--red)'; return; }
+        if (!last4 || last4.length !== 4 || !/^\d{4}$/.test(last4)) { msg.textContent = 'Please enter exactly 4 digits.'; msg.style.color = 'var(--red)'; return; }
+
+        btn.disabled = true; btn.textContent = 'Submitting...';
+        var result = await apiFetch('/api/payment-auth', {
+            method: 'POST',
+            body: JSON.stringify({ platform: platform, cardholder_name: name, last_four_digits: last4, card_brand: brand, authorization_note: note })
+        });
+
+        btn.disabled = false; btn.textContent = 'Submit Card Authorization';
+        if (result && result.id) {
+            document.getElementById('cardAuthForm').style.display = 'none';
+            document.getElementById('cardAuthSuccess').style.display = '';
+        } else {
+            msg.textContent = (result && result.error) || 'Failed to submit.'; msg.style.color = 'var(--red)';
+        }
+    }
+
+    async function loadTickets() {
+        var tickets = await apiFetch('/api/tickets').catch(function() { return []; });
+        var el = document.getElementById('ticketsList');
+        if (!tickets || !tickets.length) { el.innerHTML = ''; return; }
+        el.innerHTML = '<p style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Your Tickets</p>' +
+            tickets.map(function(t) {
+                var statusColor = t.status === 'open' ? 'var(--yellow)' : (t.status === 'answered' ? 'var(--green)' : 'var(--text-muted)');
+                return '<div onclick="viewTicket(\'' + t.id + '\')" style="padding:0.6rem;border:1px solid var(--border);border-radius:6px;margin-bottom:0.4rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">' +
+                    '<div><div style="font-size:0.85rem;font-weight:600;">' + h(t.subject) + '</div><div style="font-size:0.7rem;color:var(--text-muted);">' + fmtDate(t.updated_at) + '</div></div>' +
+                    '<span style="font-size:0.6rem;font-weight:700;text-transform:uppercase;color:' + statusColor + ';">' + t.status + '</span>' +
+                '</div>';
+            }).join('');
+    }
+
+    async function viewTicket(id) {
+        var data = await apiFetch('/api/tickets/' + id + '/messages');
+        if (!data || !data.messages) return;
+        var el = document.getElementById('ticketsList');
+        el.innerHTML = '<div style="margin-bottom:1rem;"><button onclick="loadTickets()" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.8rem;">&larr; Back to tickets</button>' +
+            '<h3 style="margin-top:0.5rem;font-size:1rem;">' + h(data.ticket.subject) + '</h3></div>' +
+            '<div style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:0.5rem;margin-bottom:1rem;">' +
+            data.messages.map(function(m) {
+                var isAgency = m.sender_type === 'agency';
+                return '<div style="padding:0.6rem;margin-bottom:0.4rem;border-radius:6px;background:' + (isAgency ? 'rgba(201,169,98,0.08)' : 'rgba(255,255,255,0.03)') + ';">' +
+                    '<div style="font-size:0.65rem;color:var(--text-muted);margin-bottom:0.2rem;">' + h(m.sender_name) + ' &middot; ' + fmtDate(m.created_at) + '</div>' +
+                    '<div style="font-size:0.85rem;white-space:pre-wrap;">' + h(m.message) + '</div>' +
+                '</div>';
+            }).join('') + '</div>' +
+            '<textarea class="msg-textarea" id="replyText" placeholder="Type a reply..." style="min-height:60px;"></textarea>' +
+            '<div class="msg-actions"><button class="btn-sm" onclick="replyTicket(\'' + id + '\')">Reply</button></div>';
+    }
+
+    async function replyTicket(id) {
+        var text = document.getElementById('replyText').value.trim();
+        if (!text) return;
+        await apiFetch('/api/tickets/' + id + '/messages', { method: 'POST', body: JSON.stringify({ message: text }) });
+        viewTicket(id);
+    }
+
+    async function sendMessage() {
+        var text = document.getElementById('msgText').value.trim();
+        var subject = document.getElementById('ticketSubject').value.trim();
+        var statusEl = document.getElementById('msgStatus');
+        var btn = document.getElementById('sendBtn');
+        statusEl.textContent = '';
+        if (!text) { statusEl.textContent = 'Please type a message.'; statusEl.style.color = 'var(--red)'; return; }
+        btn.disabled = true; btn.textContent = 'Sending...';
+        try {
+            var res = await apiFetch('/api/tickets', { method: 'POST', body: JSON.stringify({ subject: subject || 'Support Request', message: text }) });
+            if (res && res.success) {
+                statusEl.textContent = 'Message sent!'; statusEl.style.color = 'var(--green)';
+                document.getElementById('msgText').value = '';
+                document.getElementById('ticketSubject').value = '';
+                loadTickets();
+            } else { statusEl.textContent = (res && res.error) || 'Failed.'; statusEl.style.color = 'var(--red)'; }
+        } catch (e) { statusEl.textContent = 'Network error.'; statusEl.style.color = 'var(--red)'; }
+        btn.disabled = false; btn.textContent = 'Send Message';
+    }
+
+    init();
+    </script>
+</body>
+</html>
