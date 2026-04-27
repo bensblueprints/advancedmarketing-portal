@@ -511,7 +511,16 @@ app.patch('/api/admin/payment-auths/:id', auth, adminOnly, async (req, res) => {
 
 // ============ STRIPE INVOICES ============
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || '');
+const stripe = process.env.STRIPE_SECRET_KEY ? require('stripe')(process.env.STRIPE_SECRET_KEY) : {
+  customers: { list: async () => ({ data: [] }), create: async () => ({ id: 'mock' }) },
+  invoices: { list: async () => ({ data: [] }), create: async () => ({ id: 'mock' }), finalizeInvoice: async () => ({ id: 'mock', hosted_invoice_url: '', invoice_pdf: '', amount_due: 0 }), sendInvoice: async () => ({ id: 'mock' }), voidInvoice: async () => ({ id: 'mock', status: 'void' }) },
+  invoiceItems: { create: async () => ({ id: 'mock' }) },
+  checkout: { sessions: { list: async () => ({ data: [] }) } },
+  products: { create: async () => ({ id: 'mock' }) },
+  prices: { create: async () => ({ id: 'mock', unit_amount: 0, recurring: { interval: 'month', interval_count: 1 } }) },
+  subscriptions: { list: async () => ({ data: [] }), create: async () => ({ id: 'mock', status: 'active', current_period_end: Math.floor(Date.now()/1000) }), update: async () => ({ id: 'mock', cancel_at_period_end: true }), cancel: async () => ({ id: 'mock' }) },
+  charges: { list: async () => ({ data: [], has_more: false }) }
+};
 
 // Create and send invoice
 app.post('/api/admin/invoices', auth, adminOrRep, async (req, res) => {
